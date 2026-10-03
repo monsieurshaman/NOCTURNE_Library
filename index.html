@@ -3447,22 +3447,14 @@
             let freshVersion = null;
             let finished = false;
             let skippedByUser = false;
-            let downloadComplete = false;
-            let storeComplete = false;
+            let checkDone = false;
+            let downloadDone = false;
+            let writeDone = false;
 
-            let settleTimer = null;
-
-            function scheduleFinishCheck() {
-                clearTimeout(settleTimer);
-                settleTimer = setTimeout(maybeFinish, 700);
-            }
-
-            function maybeFinish() {
+            function finishPipeline() {
                 if (finished || skippedByUser) return;
-                if (!downloadComplete || !storeComplete) return;
                 finished = true;
                 clearTimeout(skipTimer);
-                clearTimeout(settleTimer);
                 clearInterval(tipInterval);
                 if (_cacheProgressHandler && navigator.serviceWorker) {
                     navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
@@ -3477,25 +3469,32 @@
                 }, 700);
             }
 
+            function maybeFinish() {
+                if (checkDone && downloadDone && writeDone) finishPipeline();
+            }
+
+            function onSkipClick() {
+                if (finished || skippedByUser) return;
+                skippedByUser = true;
+                clearTimeout(skipTimer);
+                clearInterval(tipInterval);
+                if (_cacheProgressHandler && navigator.serviceWorker) {
+                    navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
+                }
+                dlTitle.textContent = 'skipping';
+                dlSub.textContent = 'update skipped, restarting...';
+                setPhase('dl-phase-check', 'error', 'Skipped', 'skip_next');
+                setPhase('dl-phase-download', 'error', 'Skipped', 'skip_next');
+                setPhase('dl-phase-cache', 'error', 'Skipped', 'skip_next');
+                setTimeout(() => { window.location.reload(); }, 800);
+            }
+
+            dlSkip.style.pointerEvents = '';
+            dlSkip.addEventListener('click', onSkipClick, { once: true });
+
             const skipTimer = setTimeout(() => {
                 if (finished || skippedByUser) return;
                 dlSkip.classList.add('show');
-                dlSkip.onclick = () => {
-                    if (finished || skippedByUser) return;
-                    skippedByUser = true;
-                    dlSkip.onclick = null;
-                    dlSkip.style.pointerEvents = 'none';
-                    clearTimeout(skipTimer);
-                    clearInterval(tipInterval);
-                    if (_cacheProgressHandler && navigator.serviceWorker) {
-                        navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
-                    }
-                    dlTitle.textContent = 'skipping';
-                    dlSub.textContent = 'update skipped, restarting...';
-                    setPhase('dl-phase-download', 'error', 'Skipped', 'skip_next');
-                    setPhase('dl-phase-cache', 'error', 'Skipped', 'skip_next');
-                    setTimeout(() => { window.location.reload(); }, 800);
-                };
             }, 15000);
 
             if (_cacheProgressHandler && navigator.serviceWorker) {
@@ -3504,92 +3503,118 @@
 
             _cacheProgressHandler = (event) => {
                 if (!event.data) return;
-                const { type, progress, processed, stored, total, errors, url, checked, ok, skipped } = event.data;
+                const data = event.data;
 
-                if (type === 'CACHE_START') {
+                if (data.type === 'CACHE_START') {
                     dlBar.style.transition = 'width 0.2s linear';
                     setOverall(0);
-                    setPhase('dl-phase-check', 'active', `0 / ${total}`, 'search');
+                    setPhase('dl-phase-check', 'active', `0 / ${data.total}`, 'search');
                     setPhaseBar('check', 0);
                     dlTitle.textContent = 'checking assets';
-                    dlSub.textContent = `verifying ${total} files`;
+                    dlSub.textContent = `verifying ${data.total} files`;
                     return;
                 }
 
-                if (type === 'CACHE_CHECK') {
-                    const pct = Math.round((checked / total) * 100);
+                if (data.type === 'CACHE_CHECK') {
+                    const pct = Math.round((data.checked / data.total) * 100);
                     setPhaseBar('check', pct);
-                    setOverall(5 + pct * 0.2);
-                    setPhase('dl-phase-check', 'active', `${checked} / ${total}`, 'search');
+                    setOverall(pct * 0.2);
+                    setPhase('dl-phase-check', 'active', `${data.checked} / ${data.total}`, 'search');
                     dlTitle.textContent = 'checking assets';
-                    dlSub.textContent = `${checked} / ${total} verified`;
+                    dlSub.textContent = `${data.checked} / ${data.total} verified`;
                     return;
                 }
 
-                if (type === 'CACHE_CHECK_DONE') {
+                if (data.type === 'CACHE_CHECK_DONE') {
+                    checkDone = true;
                     setPhaseBar('check', 100);
-                    setOverall(25);
-                    setPhase('dl-phase-check', 'done', `${total} / ${total}`, 'check_circle');
+                    setOverall(20);
+                    setPhase('dl-phase-check', 'done', `${data.total} / ${data.total}`, 'check_circle');
+                    dlTitle.textContent = 'check complete';
+                    dlSub.textContent = `${data.ok} reachable${data.skipped > 0 ? ` · ${data.skipped} skipped` : ''}`;
 
-                    if (ok === 0) {
+                    if (data.ok === 0) {
+                        downloadDone = true;
+                        writeDone = true;
+                        setPhase('dl-phase-download', 'error', '0', 'warning');
+                        setPhase('dl-phase-cache', 'error', '0', 'warning');
+                        setPhaseBar('download', 100);
+                        setPhaseBar('cache', 100);
                         dlTitle.textContent = 'nothing to download';
-                        dlSub.textContent = `${skipped} asset${skipped !== 1 ? 's' : ''} unreachable`;
-                        setPhase('dl-phase-download', 'error', `0 / ${total}`, 'warning');
-                        setPhase('dl-phase-cache', 'error', 'Skipped', 'warning');
-                        setPhaseBar('download', 100);
-                        setPhaseBar('cache', 100);
-                        return;
+                        dlSub.textContent = 'all assets unreachable';
+                        maybeFinish();
                     }
+                    return;
+                }
 
-                    setPhase('dl-phase-download', 'active', `0 / ${ok}`, 'sync');
+                if (data.type === 'CACHE_DOWNLOAD_START') {
+                    setPhase('dl-phase-download', 'active', `0 / ${data.total}`, 'sync');
                     setPhaseBar('download', 0);
+                    setOverall(20);
                     dlTitle.textContent = 'downloading';
-                    dlSub.textContent = `${ok} file${ok !== 1 ? 's' : ''} to fetch${skipped > 0 ? ` · ${skipped} skipped` : ''}`;
+                    dlSub.textContent = `${data.total} file${data.total !== 1 ? 's' : ''} to fetch`;
                     return;
                 }
 
-                if (type === 'CACHE_ERROR') {
-                    dlSub.textContent = `${errors} skipped so far`;
+                if (data.type === 'CACHE_DOWNLOAD') {
+                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 100;
+                    setPhaseBar('download', pct);
+                    setOverall(20 + pct * 0.5);
+                    setPhase('dl-phase-download', 'active', `${data.processed} / ${data.total}`, 'sync');
+                    dlTitle.textContent = 'downloading';
+                    dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
                     return;
                 }
 
-                if (type === 'CACHE_PROGRESS') {
-                    setPhaseBar('download', progress);
-                    setOverall(25 + progress * 0.45);
-
-                    if (progress > 0 && progress < 100) {
-                        setPhase('dl-phase-download', 'active', `${processed} / ${total}`, 'sync');
-                        dlTitle.textContent = 'downloading';
-                        dlSub.textContent = `${processed} / ${total}${errors > 0 ? ` · ${errors} skipped` : ''}`;
-                    }
-
-                    if (progress >= 100) {
-                        downloadComplete = true;
-                        setPhase('dl-phase-download', 'done', `${processed} / ${total}`, 'check_circle');
-                        setPhaseBar('download', 100);
-                        if (!storeComplete) {
-                            dlTitle.textContent = 'saving to storage';
-                            dlSub.textContent = 'writing files locally...';
-                        }
-                        scheduleFinishCheck();
-                    }
-                    return;
-                }
-
-                if (type === 'CACHE_STORE') {
-                    setPhaseBar('cache', progress);
-                    setOverall(70 + progress * 0.3);
-
-                    if (progress > 0 && progress < 100) {
-                        setPhase('dl-phase-cache', 'active', `${stored} / ${total}`, 'sync');
-                    }
-
-                    if (progress >= 100) {
-                        storeComplete = true;
-                        setPhase('dl-phase-cache', errors > 0 ? 'error' : 'done', errors > 0 ? `${errors} skipped` : `${stored} / ${total}`, errors > 0 ? 'warning' : 'check_circle');
+                if (data.type === 'CACHE_DOWNLOAD_DONE') {
+                    downloadDone = true;
+                    setPhaseBar('download', 100);
+                    setOverall(70);
+                    setPhase('dl-phase-download', 'done', `${data.total}`, 'check_circle');
+                    dlTitle.textContent = 'download complete';
+                    dlSub.textContent = data.errors > 0 ? `${data.errors} skipped` : `${data.total} file${data.total !== 1 ? 's' : ''}`;
+                    if (data.total === 0 || data.kept === 0) {
+                        writeDone = true;
+                        setPhase('dl-phase-cache', 'error', '0', 'warning');
                         setPhaseBar('cache', 100);
-                        scheduleFinishCheck();
+                        dlTitle.textContent = 'nothing to write';
+                        dlSub.textContent = 'no files were fetched';
+                        maybeFinish();
                     }
+                    return;
+                }
+
+                if (data.type === 'CACHE_WRITE_START') {
+                    setPhase('dl-phase-cache', 'active', `0 / ${data.total}`, 'sync');
+                    setPhaseBar('cache', 0);
+                    setOverall(70);
+                    dlTitle.textContent = 'saving to storage';
+                    dlSub.textContent = `writing ${data.total} file${data.total !== 1 ? 's' : ''}`;
+                    return;
+                }
+
+                if (data.type === 'CACHE_WRITE') {
+                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 100;
+                    setPhaseBar('cache', pct);
+                    setOverall(70 + pct * 0.3);
+                    setPhase('dl-phase-cache', 'active', `${data.processed} / ${data.total}`, 'sync');
+                    dlTitle.textContent = 'saving to storage';
+                    dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
+                    return;
+                }
+
+                if (data.type === 'CACHE_WRITE_DONE') {
+                    writeDone = true;
+                    setPhaseBar('cache', 100);
+                    setOverall(100);
+                    const hasErrors = data.errors > 0;
+                    setPhase('dl-phase-cache', hasErrors ? 'error' : 'done', hasErrors ? `${data.errors} skipped` : `${data.total}`, hasErrors ? 'warning' : 'check_circle');
+                    maybeFinish();
+                    return;
+                }
+
+                if (data.type === 'CACHE_ERROR') {
+                    dlSub.textContent = `${data.errors} error${data.errors !== 1 ? 's' : ''} so far`;
                     return;
                 }
             };
@@ -3674,6 +3699,7 @@
                     'https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js',
                     'https://cdn.jsdelivr.net/npm/babylonjs@9.11.0/babylon.js',
                     'https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js',
+                    'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
                     'https://cdn.babylonjs.com/ammo.js',
                     'https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.11.0/babylonjs.loaders.min.js',
                     'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
@@ -3748,7 +3774,7 @@
                     if (vMatch) freshVersion = vMatch[1];
                 } catch (_) { }
 
-                const swUrl = `/sw.js?update=${Date.now()}&standalone=${isStandalone}&includeGames=${_includeGames}`;
+                const swUrl = `/sw.js?update=${Date.now()}&standalone=${isStandalone}&includeGames=${_includeGames}&forceInstall=true`;
                 await navigator.serviceWorker.register(swUrl);
 
             } catch (err) {

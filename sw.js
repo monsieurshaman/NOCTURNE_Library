@@ -1,4 +1,4 @@
-const CACHE_NAME = 'v5.0.0-Prismatic';
+const CACHE_NAME = 'v5.0.2-Prismatic';
 
 const CORE_URLS = [
     '/',
@@ -67,6 +67,7 @@ const GAME_URLS = [
     'https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js',
     'https://cdn.jsdelivr.net/npm/babylonjs@9.11.0/babylon.js',
     'https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
     'https://cdn.babylonjs.com/ammo.js',
     'https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.11.0/babylonjs.loaders.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
@@ -95,8 +96,8 @@ self.addEventListener('install', e => {
         const DOWNLOAD_TIMEOUT_MS = 45000;
 
         let checkedAssets = 0;
-        let processedAssets = 0;
-        let storedAssets = 0;
+        let downloadedAssets = 0;
+        let writtenAssets = 0;
         let errorCount = 0;
 
         async function broadcast(msg) {
@@ -162,115 +163,118 @@ self.addEventListener('install', e => {
         });
 
         if (downloadable.length === 0) {
-            await broadcast({ type: 'CACHE_PROGRESS', progress: 100, processed: 0, total: 0, errors: errorCount });
-            await broadcast({ type: 'CACHE_STORE', progress: 100, stored: 0, total: 0, errors: errorCount });
+            await broadcast({ type: 'CACHE_DOWNLOAD_DONE', total: 0, errors: 0, kept: 0 });
+            await broadcast({ type: 'CACHE_WRITE_DONE', total: 0, errors: 0 });
             return;
         }
 
-        async function downloadAsset(entry) {
-            const { absoluteUrl, cached } = entry;
-            let downloadCounted = false;
-            let storeCounted = false;
+        await broadcast({ type: 'CACHE_DOWNLOAD_START', total: downloadable.length });
 
-            const bumpDownload = async () => {
-                if (downloadCounted) return;
-                downloadCounted = true;
-                processedAssets++;
-                await broadcast({
-                    type: 'CACHE_PROGRESS',
-                    progress: Math.round((processedAssets / downloadable.length) * 100),
-                    processed: processedAssets,
-                    total: downloadable.length,
-                    errors: errorCount
-                });
-            };
+        const fetchedBlobs = new Map();
 
-            const bumpStore = async () => {
-                if (storeCounted) return;
-                storeCounted = true;
-                storedAssets++;
-                await broadcast({
-                    type: 'CACHE_STORE',
-                    progress: Math.round((storedAssets / downloadable.length) * 100),
-                    stored: storedAssets,
-                    total: downloadable.length,
-                    errors: errorCount
-                });
-            };
-
-            if (cached) {
-                await bumpDownload();
-                await bumpStore();
-                return;
-            }
-
+        await Promise.all(downloadable.map(async (entry) => {
+            const { absoluteUrl } = entry;
             try {
                 const response = await fetchWithTimeout(absoluteUrl, { cache: 'reload' }, DOWNLOAD_TIMEOUT_MS);
-
                 if (response.status !== 200) {
-                    console.warn('Skipping non-200 asset:', absoluteUrl, response.status);
+                    console.warn('[Prism SW] Download non-200:', absoluteUrl, response.status);
                     errorCount++;
-                    await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount });
+                    await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount, phase: 'download' });
                     return;
                 }
-
-                if (absoluteUrl.includes('fonts.googleapis.com')) {
-                    const cssText = await response.clone().text();
-                    const fontUrls = [...cssText.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)].map(m => m[1]);
-
-                    for (const fontUrl of fontUrls) {
-                        try {
-                            const fontRes = await fetchWithTimeout(fontUrl, {}, DOWNLOAD_TIMEOUT_MS);
-                            if (fontRes.status !== 200) continue;
-
-                            const fontBlob = await fontRes.blob();
-                            const fontCacheRes = new Response(fontBlob.slice(0), {
-                                status: 200,
-                                headers: { 'Content-Type': fontRes.headers.get('content-type') || 'application/octet-stream' }
-                            });
-                            await cache.put(fontUrl, fontCacheRes);
-
-                            if (isStandalone) {
-                                try {
-                                    await setIDBData(fontUrl, { blob: fontBlob.slice(0), type: fontCacheRes.headers.get('content-type') });
-                                } catch (_) {
-                                    await deleteIDBData(fontUrl).catch(() => { });
-                                }
-                            }
-                        } catch (_) { }
-                    }
-                }
-
-                const blob = await response.blob();
                 const contentType = response.headers.get('content-type');
+                const blob = await response.blob();
+                fetchedBlobs.set(absoluteUrl, { blob, type: contentType });
+            } catch (err) {
+                console.error('[Prism SW] Download error:', absoluteUrl, err);
+                errorCount++;
+                await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount, phase: 'download' });
+            } finally {
+                downloadedAssets++;
+                await broadcast({
+                    type: 'CACHE_DOWNLOAD',
+                    processed: downloadedAssets,
+                    total: downloadable.length,
+                    errors: errorCount
+                });
+            }
+        }));
 
-                await bumpDownload();
+        await broadcast({
+            type: 'CACHE_DOWNLOAD_DONE',
+            total: downloadable.length,
+            errors: errorCount,
+            kept: fetchedBlobs.size
+        });
+
+        if (fetchedBlobs.size === 0) {
+            await broadcast({ type: 'CACHE_WRITE_DONE', total: 0, errors: errorCount });
+            return;
+        }
+
+        await broadcast({ type: 'CACHE_WRITE_START', total: fetchedBlobs.size });
+
+        let writeErrors = 0;
+
+        await Promise.all([...fetchedBlobs.entries()].map(async ([absoluteUrl, entry]) => {
+            const { blob, type } = entry;
+            try {
+                if (absoluteUrl.includes('fonts.googleapis.com')) {
+                    try {
+                        const cssText = await blob.text();
+                        const fontUrls = [...cssText.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)].map(m => m[1]);
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontRes = await fetchWithTimeout(fontUrl, {}, DOWNLOAD_TIMEOUT_MS);
+                                if (fontRes.status !== 200) continue;
+                                const fontBlob = await fontRes.blob();
+                                const fontCacheRes = new Response(fontBlob.slice(0), {
+                                    status: 200,
+                                    headers: { 'Content-Type': fontRes.headers.get('content-type') || 'application/octet-stream' }
+                                });
+                                await cache.put(fontUrl, fontCacheRes);
+                                if (isStandalone) {
+                                    try {
+                                        await setIDBData(fontUrl, { blob: fontBlob.slice(0), type: fontCacheRes.headers.get('content-type') });
+                                    } catch (_) { }
+                                }
+                            } catch (_) { }
+                        }
+                    } catch (_) { }
+                }
 
                 const cacheResponse = new Response(blob.slice(0), {
                     status: 200,
-                    headers: { 'Content-Type': contentType || 'application/octet-stream' }
+                    headers: { 'Content-Type': type || 'application/octet-stream' }
                 });
                 await cache.put(absoluteUrl, cacheResponse);
 
                 if (isStandalone) {
                     try {
-                        await setIDBData(absoluteUrl, { blob: blob.slice(0), type: contentType });
+                        await setIDBData(absoluteUrl, { blob: blob.slice(0), type });
                     } catch (_) {
                         await deleteIDBData(absoluteUrl).catch(() => { });
                     }
                 }
             } catch (err) {
-                console.error('Precaching error for:', absoluteUrl, err);
-                errorCount++;
-                await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount });
-                await deleteIDBData(absoluteUrl).catch(() => { });
+                console.error('[Prism SW] Write error:', absoluteUrl, err);
+                writeErrors++;
             } finally {
-                await bumpDownload();
-                await bumpStore();
+                writtenAssets++;
+                await broadcast({
+                    type: 'CACHE_WRITE',
+                    processed: writtenAssets,
+                    total: fetchedBlobs.size,
+                    errors: writeErrors
+                });
             }
-        }
+        }));
 
-        await Promise.all(downloadable.map(downloadAsset));
+        await broadcast({
+            type: 'CACHE_WRITE_DONE',
+            total: fetchedBlobs.size,
+            errors: writeErrors
+        });
     })());
 });
 
