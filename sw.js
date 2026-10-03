@@ -88,154 +88,177 @@ self.addEventListener('install', e => {
     }
 
     const urlsToCache = includeGames ? [...CORE_URLS, ...GAME_URLS] : CORE_URLS;
+    const CHECK_TIMEOUT_MS = 8000;
+    const DOWNLOAD_TIMEOUT_MS = 45000;
 
-    e.waitUntil((async () => {
-        const cache = await caches.open(CACHE_NAME);
-        const totalAssets = urlsToCache.length;
-        const CHECK_TIMEOUT_MS = 8000;
-        const DOWNLOAD_TIMEOUT_MS = 45000;
+    async function broadcast(msg) {
+        const clientsList = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
+        for (const client of clientsList) client.postMessage(msg);
+    }
 
-        let checkedAssets = 0;
-        let downloadedAssets = 0;
-        let writtenAssets = 0;
-        let errorCount = 0;
+    function fetchWithTimeout(url, opts, ms) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), ms);
+        return fetch(url, Object.assign({}, opts, { signal: controller.signal }))
+            .finally(() => clearTimeout(timer));
+    }
 
-        async function broadcast(msg) {
-            const clientsList = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
-            for (const client of clientsList) client.postMessage(msg);
-        }
+    async function runCheckPhase() {
+        const total = urlsToCache.length;
+        await broadcast({ type: 'PHASE_START', phase: 'check', total });
 
-        function fetchWithTimeout(url, opts, ms) {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), ms);
-            return fetch(url, Object.assign({}, opts, { signal: controller.signal }))
-                .finally(() => clearTimeout(timer));
-        }
-
-        async function checkAsset(absoluteUrl) {
-            try {
-                const cached = await caches.match(absoluteUrl);
-                if (cached) return { ok: true, cached: true };
-            } catch (_) { }
-
-            try {
-                const res = await fetchWithTimeout(absoluteUrl, { method: 'HEAD', cache: 'no-store' }, CHECK_TIMEOUT_MS);
-                if (res.status === 200 || res.status === 304) return { ok: true, cached: false };
-                if (res.status !== 405 && res.status !== 501) return { ok: false, cached: false };
-            } catch (_) { }
-
-            try {
-                const res = await fetchWithTimeout(absoluteUrl, { cache: 'no-store' }, CHECK_TIMEOUT_MS);
-                return { ok: res.status === 200 || res.status === 304, cached: false };
-            } catch (_) {
-                return { ok: false, cached: false };
-            }
-        }
-
-        await broadcast({ type: 'CACHE_START', total: totalAssets });
-
-        const entries = await Promise.all(urlsToCache.map(async (url) => {
+        let processed = 0;
+        const results = await Promise.all(urlsToCache.map(async (url) => {
             const absoluteUrl = new URL(url, self.location.origin).href;
-            const result = await checkAsset(absoluteUrl);
-            checkedAssets++;
+            let ok = false;
+            let cached = false;
+
+            try {
+                const hit = await caches.match(absoluteUrl);
+                if (hit) { cached = true; ok = true; }
+            } catch (_) { }
+
+            if (!cached) {
+                try {
+                    const res = await fetchWithTimeout(absoluteUrl, { method: 'HEAD', cache: 'no-store' }, CHECK_TIMEOUT_MS);
+                    if (res.status === 200 || res.status === 304) ok = true;
+                    else if (res.status === 405 || res.status === 501) {
+                        const res2 = await fetchWithTimeout(absoluteUrl, { cache: 'no-store' }, CHECK_TIMEOUT_MS);
+                        ok = res2.status === 200 || res2.status === 304;
+                    }
+                } catch (_) {
+                    try {
+                        const res2 = await fetchWithTimeout(absoluteUrl, { cache: 'no-store' }, CHECK_TIMEOUT_MS);
+                        ok = res2.status === 200 || res2.status === 304;
+                    } catch (_) { ok = false; }
+                }
+            }
+
+            processed++;
             await broadcast({
-                type: 'CACHE_CHECK',
-                checked: checkedAssets,
-                total: totalAssets,
+                type: 'PHASE_PROGRESS',
+                phase: 'check',
+                processed,
+                total,
                 url: absoluteUrl,
-                ok: result.ok
+                ok
             });
-            return { url, absoluteUrl, ok: result.ok, cached: result.cached };
+            return { absoluteUrl, ok, cached };
         }));
 
-        const downloadable = entries.filter(x => x.ok);
-        const skipped = entries.filter(x => !x.ok);
-
-        for (const s of skipped) {
-            console.warn('[Prism SW] Unreachable asset, skipping:', s.absoluteUrl);
-        }
+        const okCount = results.filter(r => r.ok).length;
+        const skippedCount = results.length - okCount;
 
         await broadcast({
-            type: 'CACHE_CHECK_DONE',
-            total: totalAssets,
-            ok: downloadable.length,
-            skipped: skipped.length
+            type: 'PHASE_DONE',
+            phase: 'check',
+            ok: okCount,
+            skipped: skippedCount,
+            total
         });
 
-        if (downloadable.length === 0) {
-            await broadcast({ type: 'CACHE_DOWNLOAD_DONE', total: 0, errors: 0, kept: 0 });
-            await broadcast({ type: 'CACHE_WRITE_DONE', total: 0, errors: 0 });
-            return;
+        return results;
+    }
+
+    async function runDownloadPhase(results) {
+        const downloadable = results.filter(r => r.ok);
+        const total = downloadable.length;
+
+        await broadcast({ type: 'PHASE_START', phase: 'download', total });
+
+        if (total === 0) {
+            await broadcast({ type: 'PHASE_DONE', phase: 'download', processed: 0, total: 0, errors: 0 });
+            return [];
         }
 
-        await broadcast({ type: 'CACHE_DOWNLOAD_START', total: downloadable.length });
-
-        const fetchedBlobs = new Map();
+        let processed = 0;
+        let errors = 0;
+        const downloaded = [];
 
         await Promise.all(downloadable.map(async (entry) => {
-            const { absoluteUrl } = entry;
+            if (entry.cached) {
+                downloaded.push({ absoluteUrl: entry.absoluteUrl, cached: true, blob: null, contentType: null });
+                processed++;
+                await broadcast({
+                    type: 'PHASE_PROGRESS',
+                    phase: 'download',
+                    processed,
+                    total,
+                    errors
+                });
+                return;
+            }
+
             try {
-                const response = await fetchWithTimeout(absoluteUrl, { cache: 'reload' }, DOWNLOAD_TIMEOUT_MS);
+                const response = await fetchWithTimeout(entry.absoluteUrl, { cache: 'reload' }, DOWNLOAD_TIMEOUT_MS);
                 if (response.status !== 200) {
-                    console.warn('[Prism SW] Download non-200:', absoluteUrl, response.status);
-                    errorCount++;
-                    await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount, phase: 'download' });
+                    errors++;
+                    processed++;
+                    await broadcast({ type: 'PHASE_PROGRESS', phase: 'download', processed, total, errors });
                     return;
                 }
-                const contentType = response.headers.get('content-type');
+
                 const blob = await response.blob();
-                fetchedBlobs.set(absoluteUrl, { blob, type: contentType });
+                const contentType = response.headers.get('content-type') || 'application/octet-stream';
+                downloaded.push({ absoluteUrl: entry.absoluteUrl, cached: false, blob, contentType });
+                processed++;
+                await broadcast({ type: 'PHASE_PROGRESS', phase: 'download', processed, total, errors });
             } catch (err) {
-                console.error('[Prism SW] Download error:', absoluteUrl, err);
-                errorCount++;
-                await broadcast({ type: 'CACHE_ERROR', url: absoluteUrl, errors: errorCount, phase: 'download' });
-            } finally {
-                downloadedAssets++;
-                await broadcast({
-                    type: 'CACHE_DOWNLOAD',
-                    processed: downloadedAssets,
-                    total: downloadable.length,
-                    errors: errorCount
-                });
+                errors++;
+                processed++;
+                await broadcast({ type: 'PHASE_PROGRESS', phase: 'download', processed, total, errors });
             }
         }));
 
         await broadcast({
-            type: 'CACHE_DOWNLOAD_DONE',
-            total: downloadable.length,
-            errors: errorCount,
-            kept: fetchedBlobs.size
+            type: 'PHASE_DONE',
+            phase: 'download',
+            processed,
+            total,
+            errors
         });
 
-        if (fetchedBlobs.size === 0) {
-            await broadcast({ type: 'CACHE_WRITE_DONE', total: 0, errors: errorCount });
+        return downloaded;
+    }
+
+    async function runStorePhase(downloaded) {
+        const total = downloaded.length;
+        await broadcast({ type: 'PHASE_START', phase: 'store', total });
+
+        if (total === 0) {
+            await broadcast({ type: 'PHASE_DONE', phase: 'store', stored: 0, total: 0, errors: 0 });
             return;
         }
 
-        await broadcast({ type: 'CACHE_WRITE_START', total: fetchedBlobs.size });
+        const cache = await caches.open(CACHE_NAME);
+        let stored = 0;
+        let errors = 0;
 
-        let writeErrors = 0;
-
-        await Promise.all([...fetchedBlobs.entries()].map(async ([absoluteUrl, entry]) => {
-            const { blob, type } = entry;
+        for (const item of downloaded) {
             try {
-                if (absoluteUrl.includes('fonts.googleapis.com')) {
+                if (item.cached) {
+                    stored++;
+                    await broadcast({ type: 'PHASE_PROGRESS', phase: 'store', processed: stored, total, errors });
+                    continue;
+                }
+
+                if (item.absoluteUrl.includes('fonts.googleapis.com')) {
                     try {
-                        const cssText = await blob.text();
+                        const cssText = await item.blob.text();
                         const fontUrls = [...cssText.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)].map(m => m[1]);
                         for (const fontUrl of fontUrls) {
                             try {
                                 const fontRes = await fetchWithTimeout(fontUrl, {}, DOWNLOAD_TIMEOUT_MS);
                                 if (fontRes.status !== 200) continue;
                                 const fontBlob = await fontRes.blob();
-                                const fontCacheRes = new Response(fontBlob.slice(0), {
+                                const fontType = fontRes.headers.get('content-type') || 'application/octet-stream';
+                                await cache.put(fontUrl, new Response(fontBlob.slice(0), {
                                     status: 200,
-                                    headers: { 'Content-Type': fontRes.headers.get('content-type') || 'application/octet-stream' }
-                                });
-                                await cache.put(fontUrl, fontCacheRes);
+                                    headers: { 'Content-Type': fontType }
+                                }));
                                 if (isStandalone) {
                                     try {
-                                        await setIDBData(fontUrl, { blob: fontBlob.slice(0), type: fontCacheRes.headers.get('content-type') });
+                                        await setIDBData(fontUrl, { blob: fontBlob.slice(0), type: fontType });
                                     } catch (_) { }
                                 }
                             } catch (_) { }
@@ -243,38 +266,48 @@ self.addEventListener('install', e => {
                     } catch (_) { }
                 }
 
-                const cacheResponse = new Response(blob.slice(0), {
+                await cache.put(item.absoluteUrl, new Response(item.blob.slice(0), {
                     status: 200,
-                    headers: { 'Content-Type': type || 'application/octet-stream' }
-                });
-                await cache.put(absoluteUrl, cacheResponse);
+                    headers: { 'Content-Type': item.contentType }
+                }));
 
                 if (isStandalone) {
                     try {
-                        await setIDBData(absoluteUrl, { blob: blob.slice(0), type });
+                        await setIDBData(item.absoluteUrl, { blob: item.blob.slice(0), type: item.contentType });
                     } catch (_) {
-                        await deleteIDBData(absoluteUrl).catch(() => { });
+                        await deleteIDBData(item.absoluteUrl).catch(() => { });
                     }
                 }
+
+                stored++;
+                await broadcast({ type: 'PHASE_PROGRESS', phase: 'store', processed: stored, total, errors });
             } catch (err) {
-                console.error('[Prism SW] Write error:', absoluteUrl, err);
-                writeErrors++;
-            } finally {
-                writtenAssets++;
-                await broadcast({
-                    type: 'CACHE_WRITE',
-                    processed: writtenAssets,
-                    total: fetchedBlobs.size,
-                    errors: writeErrors
-                });
+                errors++;
+                stored++;
+                await deleteIDBData(item.absoluteUrl).catch(() => { });
+                await broadcast({ type: 'PHASE_PROGRESS', phase: 'store', processed: stored, total, errors });
             }
-        }));
+        }
 
         await broadcast({
-            type: 'CACHE_WRITE_DONE',
-            total: fetchedBlobs.size,
-            errors: writeErrors
+            type: 'PHASE_DONE',
+            phase: 'store',
+            stored,
+            total,
+            errors
         });
+    }
+
+    e.waitUntil((async () => {
+        try {
+            const results = await runCheckPhase();
+            const downloaded = await runDownloadPhase(results);
+            await runStorePhase(downloaded);
+            await broadcast({ type: 'PIPELINE_DONE' });
+        } catch (err) {
+            console.error('[Prism SW] Pipeline failed:', err);
+            await broadcast({ type: 'PIPELINE_ERROR', error: String(err) });
+        }
     })());
 });
 

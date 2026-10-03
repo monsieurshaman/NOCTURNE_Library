@@ -3447,52 +3447,43 @@
             let freshVersion = null;
             let finished = false;
             let skippedByUser = false;
-            let checkDone = false;
-            let downloadDone = false;
-            let writeDone = false;
 
-            function finishPipeline() {
-                if (finished || skippedByUser) return;
-                finished = true;
-                clearTimeout(skipTimer);
-                clearInterval(tipInterval);
-                if (_cacheProgressHandler && navigator.serviceWorker) {
-                    navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
-                }
-                setOverall(100);
-                dlTitle.textContent = 'update finished';
-                dlSub.textContent = 'update complete';
-                if (freshVersion) localStorage.setItem('PRISM_SW_VERSION', freshVersion);
-                setTimeout(() => {
-                    alert('Prism Update\n\nPrism has been fully updated. Click OK to restart.');
-                    window.location.reload();
-                }, 700);
-            }
+            let skipTimer = null;
 
-            function maybeFinish() {
-                if (checkDone && downloadDone && writeDone) finishPipeline();
-            }
-
-            function onSkipClick() {
+            function performSkip() {
                 if (finished || skippedByUser) return;
                 skippedByUser = true;
-                clearTimeout(skipTimer);
+                finished = true;
+
+                if (skipTimer) { clearTimeout(skipTimer); skipTimer = null; }
                 clearInterval(tipInterval);
+
                 if (_cacheProgressHandler && navigator.serviceWorker) {
                     navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
                 }
+
+                dlSkip.disabled = true;
+                dlSkip.style.pointerEvents = 'none';
+                dlSkip.classList.remove('show');
+
                 dlTitle.textContent = 'skipping';
                 dlSub.textContent = 'update skipped, restarting...';
                 setPhase('dl-phase-check', 'error', 'Skipped', 'skip_next');
                 setPhase('dl-phase-download', 'error', 'Skipped', 'skip_next');
                 setPhase('dl-phase-cache', 'error', 'Skipped', 'skip_next');
-                setTimeout(() => { window.location.reload(); }, 800);
+                setPhaseBar('check', 100);
+                setPhaseBar('download', 100);
+                setPhaseBar('cache', 100);
+                setOverall(100);
+
+                if (freshVersion) localStorage.setItem('PRISM_SW_VERSION', freshVersion);
+
+                setTimeout(() => { window.location.reload(); }, 500);
             }
 
-            dlSkip.style.pointerEvents = '';
-            dlSkip.addEventListener('click', onSkipClick, { once: true });
+            dlSkip.onclick = performSkip;
 
-            const skipTimer = setTimeout(() => {
+            skipTimer = setTimeout(() => {
                 if (finished || skippedByUser) return;
                 dlSkip.classList.add('show');
             }, 15000);
@@ -3504,117 +3495,114 @@
             _cacheProgressHandler = (event) => {
                 if (!event.data) return;
                 const data = event.data;
+                const type = data.type;
 
-                if (data.type === 'CACHE_START') {
-                    dlBar.style.transition = 'width 0.2s linear';
-                    setOverall(0);
-                    setPhase('dl-phase-check', 'active', `0 / ${data.total}`, 'search');
-                    setPhaseBar('check', 0);
-                    dlTitle.textContent = 'checking assets';
-                    dlSub.textContent = `verifying ${data.total} files`;
+                if (type === 'PHASE_START') {
+                    if (data.phase === 'check') {
+                        dlBar.style.transition = 'width 0.2s linear';
+                        setOverall(0);
+                        setPhase('dl-phase-check', 'active', `0 / ${data.total}`, 'search');
+                        setPhaseBar('check', 0);
+                        dlTitle.textContent = 'checking assets';
+                        dlSub.textContent = `verifying ${data.total} files`;
+                    } else if (data.phase === 'download') {
+                        setPhase('dl-phase-download', 'active', `0 / ${data.total}`, 'sync');
+                        setPhaseBar('download', 0);
+                        dlTitle.textContent = 'downloading';
+                        dlSub.textContent = data.total === 0 ? 'nothing to download' : `${data.total} file${data.total !== 1 ? 's' : ''} to fetch`;
+                    } else if (data.phase === 'store') {
+                        setPhase('dl-phase-cache', 'active', `0 / ${data.total}`, 'sync');
+                        setPhaseBar('cache', 0);
+                        dlTitle.textContent = 'saving to storage';
+                        dlSub.textContent = 'writing files locally...';
+                    }
                     return;
                 }
 
-                if (data.type === 'CACHE_CHECK') {
-                    const pct = Math.round((data.checked / data.total) * 100);
-                    setPhaseBar('check', pct);
-                    setOverall(pct * 0.2);
-                    setPhase('dl-phase-check', 'active', `${data.checked} / ${data.total}`, 'search');
-                    dlTitle.textContent = 'checking assets';
-                    dlSub.textContent = `${data.checked} / ${data.total} verified`;
+                if (type === 'PHASE_PROGRESS') {
+                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 100;
+                    if (data.phase === 'check') {
+                        setPhaseBar('check', pct);
+                        setOverall(5 + pct * 0.2);
+                        setPhase('dl-phase-check', 'active', `${data.processed} / ${data.total}`, 'search');
+                        dlSub.textContent = `${data.processed} / ${data.total} verified`;
+                    } else if (data.phase === 'download') {
+                        setPhaseBar('download', pct);
+                        setOverall(25 + pct * 0.45);
+                        setPhase('dl-phase-download', 'active', `${data.processed} / ${data.total}`, 'sync');
+                        dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
+                    } else if (data.phase === 'store') {
+                        setPhaseBar('cache', pct);
+                        setOverall(70 + pct * 0.3);
+                        setPhase('dl-phase-cache', 'active', `${data.processed} / ${data.total}`, 'sync');
+                        dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
+                    }
                     return;
                 }
 
-                if (data.type === 'CACHE_CHECK_DONE') {
-                    checkDone = true;
-                    setPhaseBar('check', 100);
-                    setOverall(20);
-                    setPhase('dl-phase-check', 'done', `${data.total} / ${data.total}`, 'check_circle');
-                    dlTitle.textContent = 'check complete';
-                    dlSub.textContent = `${data.ok} reachable${data.skipped > 0 ? ` · ${data.skipped} skipped` : ''}`;
-
-                    if (data.ok === 0) {
-                        downloadDone = true;
-                        writeDone = true;
-                        setPhase('dl-phase-download', 'error', '0', 'warning');
-                        setPhase('dl-phase-cache', 'error', '0', 'warning');
+                if (type === 'PHASE_DONE') {
+                    if (data.phase === 'check') {
+                        setPhaseBar('check', 100);
+                        setOverall(25);
+                        setPhase('dl-phase-check', 'done', `${data.total} / ${data.total}`, 'check_circle');
+                        if (data.ok === 0) {
+                            dlTitle.textContent = 'nothing to download';
+                            dlSub.textContent = `${data.skipped} asset${data.skipped !== 1 ? 's' : ''} unreachable`;
+                        } else {
+                            dlSub.textContent = `${data.ok} reachable${data.skipped > 0 ? ` · ${data.skipped} skipped` : ''}`;
+                        }
+                    } else if (data.phase === 'download') {
                         setPhaseBar('download', 100);
+                        setOverall(70);
+                        if (data.errors > 0) {
+                            setPhase('dl-phase-download', 'error', `${data.errors} skipped`, 'warning');
+                        } else {
+                            setPhase('dl-phase-download', 'done', `${data.processed} / ${data.total}`, 'check_circle');
+                        }
+                    } else if (data.phase === 'store') {
                         setPhaseBar('cache', 100);
-                        dlTitle.textContent = 'nothing to download';
-                        dlSub.textContent = 'all assets unreachable';
-                        maybeFinish();
+                        setOverall(100);
+                        if (data.errors > 0) {
+                            setPhase('dl-phase-cache', 'error', `${data.errors} skipped`, 'warning');
+                        } else {
+                            setPhase('dl-phase-cache', 'done', `${data.stored} / ${data.total}`, 'check_circle');
+                        }
                     }
                     return;
                 }
 
-                if (data.type === 'CACHE_DOWNLOAD_START') {
-                    setPhase('dl-phase-download', 'active', `0 / ${data.total}`, 'sync');
-                    setPhaseBar('download', 0);
-                    setOverall(20);
-                    dlTitle.textContent = 'downloading';
-                    dlSub.textContent = `${data.total} file${data.total !== 1 ? 's' : ''} to fetch`;
-                    return;
-                }
-
-                if (data.type === 'CACHE_DOWNLOAD') {
-                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 100;
-                    setPhaseBar('download', pct);
-                    setOverall(20 + pct * 0.5);
-                    setPhase('dl-phase-download', 'active', `${data.processed} / ${data.total}`, 'sync');
-                    dlTitle.textContent = 'downloading';
-                    dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
-                    return;
-                }
-
-                if (data.type === 'CACHE_DOWNLOAD_DONE') {
-                    downloadDone = true;
-                    setPhaseBar('download', 100);
-                    setOverall(70);
-                    setPhase('dl-phase-download', 'done', `${data.total}`, 'check_circle');
-                    dlTitle.textContent = 'download complete';
-                    dlSub.textContent = data.errors > 0 ? `${data.errors} skipped` : `${data.total} file${data.total !== 1 ? 's' : ''}`;
-                    if (data.total === 0 || data.kept === 0) {
-                        writeDone = true;
-                        setPhase('dl-phase-cache', 'error', '0', 'warning');
-                        setPhaseBar('cache', 100);
-                        dlTitle.textContent = 'nothing to write';
-                        dlSub.textContent = 'no files were fetched';
-                        maybeFinish();
+                if (type === 'PIPELINE_DONE') {
+                    if (finished || skippedByUser) return;
+                    finished = true;
+                    clearTimeout(skipTimer);
+                    clearInterval(tipInterval);
+                    if (_cacheProgressHandler && navigator.serviceWorker) {
+                        navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
                     }
-                    return;
-                }
-
-                if (data.type === 'CACHE_WRITE_START') {
-                    setPhase('dl-phase-cache', 'active', `0 / ${data.total}`, 'sync');
-                    setPhaseBar('cache', 0);
-                    setOverall(70);
-                    dlTitle.textContent = 'saving to storage';
-                    dlSub.textContent = `writing ${data.total} file${data.total !== 1 ? 's' : ''}`;
-                    return;
-                }
-
-                if (data.type === 'CACHE_WRITE') {
-                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 100;
-                    setPhaseBar('cache', pct);
-                    setOverall(70 + pct * 0.3);
-                    setPhase('dl-phase-cache', 'active', `${data.processed} / ${data.total}`, 'sync');
-                    dlTitle.textContent = 'saving to storage';
-                    dlSub.textContent = `${data.processed} / ${data.total}${data.errors > 0 ? ` · ${data.errors} skipped` : ''}`;
-                    return;
-                }
-
-                if (data.type === 'CACHE_WRITE_DONE') {
-                    writeDone = true;
-                    setPhaseBar('cache', 100);
                     setOverall(100);
-                    const hasErrors = data.errors > 0;
-                    setPhase('dl-phase-cache', hasErrors ? 'error' : 'done', hasErrors ? `${data.errors} skipped` : `${data.total}`, hasErrors ? 'warning' : 'check_circle');
-                    maybeFinish();
+                    dlTitle.textContent = 'update finished';
+                    dlSub.textContent = 'update complete';
+                    if (freshVersion) localStorage.setItem('PRISM_SW_VERSION', freshVersion);
+                    setTimeout(() => {
+                        alert('Prism Update\n\nPrism has been fully updated. Click OK to restart.');
+                        window.location.reload();
+                    }, 700);
                     return;
                 }
 
-                if (data.type === 'CACHE_ERROR') {
-                    dlSub.textContent = `${data.errors} error${data.errors !== 1 ? 's' : ''} so far`;
+                if (type === 'PIPELINE_ERROR') {
+                    if (finished || skippedByUser) return;
+                    finished = true;
+                    clearTimeout(skipTimer);
+                    clearInterval(tipInterval);
+                    if (_cacheProgressHandler && navigator.serviceWorker) {
+                        navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
+                    }
+                    dlTitle.textContent = 'update failed';
+                    dlSub.textContent = 'restarting...';
+                    setPhase('dl-phase-download', 'error', 'Failed', 'error');
+                    setPhase('dl-phase-cache', 'error', 'Failed', 'error');
+                    setTimeout(() => { window.location.reload(); }, 1500);
                     return;
                 }
             };
@@ -3774,7 +3762,7 @@
                     if (vMatch) freshVersion = vMatch[1];
                 } catch (_) { }
 
-                const swUrl = `/sw.js?update=${Date.now()}&standalone=${isStandalone}&includeGames=${_includeGames}&forceInstall=true`;
+                const swUrl = `/sw.js?update=${Date.now()}&standalone=${isStandalone}&includeGames=${_includeGames}`;
                 await navigator.serviceWorker.register(swUrl);
 
             } catch (err) {
@@ -4075,7 +4063,7 @@
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register(
-                    `/sw.js?standalone=${isStandalone}&includeGames={isStandalone}`
+                    `/sw.js?standalone=${isStandalone}&includeGames=${isStandalone}`
                 );
             }
 
