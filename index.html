@@ -4,14 +4,16 @@
 <head>
     <link rel="manifest" href="/manifest.json">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="NOCTURNE Studios - An All-in-One Hub for Everyone">
-    <meta property="og:description" content="Games, Apps & Utilities, and Tools — all in one hub. Built by NOCTURNE Studios.">
-    <meta property="og:image" content="https://nocturnestu.pages.dev/nocturneassets/og-image.png">
-    <meta property="og:url" content="https://nocturnestu.pages.dev/">
-    <meta property="og:site_name" content="Prism">
+    <meta property="og:title" content="project prism: passion project hub">
+    <meta property="og:description" content="reinventing the wheel">
+    <meta property="og:image" content="https://proprism.pages.dev/project-assets/og-image.png">
+    <meta property="og:url" content="https://proprism.pages.dev/">
+    <meta property="og:site_name" content="Prism PWA">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOCTURNE Studios - An All-in-One Hub for Everyone</title>
+    <meta name="color-scheme" content="light">
+
+    <title>project prism</title>
     <meta name="theme-color" content="#0a0a14">
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
@@ -21,11 +23,11 @@
     <style>
         :root {
             --bg: #07070f;
-            --surface-0: rgba(14, 14, 24, 0.72);
-            --surface-1: rgba(20, 20, 36, 0.68);
+            --surface-0: rgba(14, 14, 24, 0.42);
+            --surface-1: rgba(20, 20, 36, 0.38);
             --surface-2: rgba(28, 28, 46, 0.75);
-            --surface-hover: rgba(36, 36, 58, 0.82);
-            --border: rgba(255, 255, 255, 0.07);
+            --surface-hover: rgba(36, 36, 58, 0.52);
+            --border: rgba(255, 255, 255, 0.10);
             --border-strong: rgba(255, 255, 255, 0.14);
             --border-accent: rgba(124, 158, 247, 0.22);
             --primary: #7c9ef7;
@@ -42,9 +44,9 @@
             --text: #eeeef8;
             --text-sub: rgba(200, 202, 228, 0.65);
             --text-muted: rgba(160, 164, 200, 0.38);
-            --blur-sm: blur(16px);
-            --blur-md: blur(28px);
-            --blur-lg: blur(48px);
+            --blur-sm: blur(8px);
+            --blur-md: blur(14px);
+            --blur-lg: blur(24px);
             --r-sm: 16px;
             --r-md: 24px;
             --r-lg: 32px;
@@ -52,6 +54,7 @@
             --r-pill: 100px;
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
             --ease-out: cubic-bezier(0.2, 0, 0, 1);
+            color-scheme: light;
         }
 
         *,
@@ -325,6 +328,124 @@
             text-transform: uppercase;
         }
 
+        @media (max-width: 1023px) {
+            .topbar {
+                margin-bottom: 24px;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .mobile-layout {
+                padding-top: 76px;
+                padding-bottom: 96px;
+            }
+
+            .hero-card-lite {
+                background: var(--surface-0);
+                border: 1px solid var(--border);
+                border-radius: var(--r-xl);
+                backdrop-filter: var(--blur-md);
+                padding: 20px 22px;
+                margin-bottom: 14px;
+                transition: max-height 0.35s var(--spring), opacity 0.25s ease, padding 0.3s ease, margin 0.3s ease;
+                overflow: hidden;
+            }
+
+            .bottombar {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                left: auto;
+                z-index: 700;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 8px;
+                width: fit-content;
+                padding: 7px 9px;
+                background: rgba(7, 7, 15, 0.75);
+                backdrop-filter: var(--blur-md);
+                -webkit-backdrop-filter: var(--blur-md);
+                border: 1px solid var(--border);
+                border-radius: 26px;
+                corner-shape: squircle;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            }
+
+            .bottombar-item {
+                position: relative;
+                width: 34px;
+                height: 34px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-sub);
+                background: var(--surface-1);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                corner-shape: squircle;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background 0.2s ease, color 0.2s ease, transform 0.25s var(--spring);
+            }
+            .bottombar-item .material-icons-round {
+                font-size: 18px;
+            }
+            .bottombar-item:hover {
+                background: var(--surface-hover);
+                color: var(--primary);
+                transform: translateY(-2px);
+            }
+            .bottombar-item:active {
+                transform: translateY(0) scale(0.95);
+            }
+
+            .bottombar-item .notif-dot {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #4ade80;
+                box-shadow: 0 0 6px rgba(74, 222, 128, 0.65);
+            }
+
+            .changelog-bubble {
+                position: absolute;
+                bottom: calc(100% + 12px);
+                right: -8px;
+                background: var(--surface-1);
+                border: 1px solid var(--border-accent);
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px;
+                font-weight: 500;
+                white-space: nowrap;
+                padding: 9px 14px;
+                border-radius: var(--r-md);
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+                animation: bubble-pop 0.4s var(--spring);
+            }
+
+            .changelog-bubble-arrow {
+                position: absolute;
+                bottom: -5px;
+                right: 16px;
+                width: 10px;
+                height: 10px;
+                background: var(--surface-1);
+                border-right: 1px solid var(--border-accent);
+                border-bottom: 1px solid var(--border-accent);
+                transform: rotate(45deg);
+            }
+
+            @keyframes bubble-pop {
+                0%   { opacity: 0; transform: translateY(6px) scale(0.9); }
+                100% { opacity: 1; transform: translateY(0) scale(1); }
+            }
+        }
+
         .hero-card {
             background: var(--surface-0);
             border: 1px solid var(--border);
@@ -484,6 +605,59 @@
             filter: brightness(0.92);
         }
 
+        .notifs-btn {
+            display: none;                     
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: var(--surface-1);
+            color: var(--text-sub);
+            padding: 16px 28px;
+            border-radius: var(--r-pill);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            margin-top: 10px;
+            transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease-out),
+                        background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .notifs-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);
+        }
+
+        .notifs-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-strong);
+            color: var(--text);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .notifs-btn:active {
+            transform: translateY(0) scale(0.98);
+        } 
+
+        .notifs-btn .material-icons-round {
+            font-size: 20px;
+        }
+
+        @media (display-mode: standalone) {
+            .notifs-btn {
+                display: flex;
+            }
+        }
+
         .install-btn {
             display: flex;
             align-items: center;
@@ -601,6 +775,70 @@
             box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.07);
         }
 
+        .cards-grid.tile-layout,
+        .dt-cards-grid.tile-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            grid-auto-rows: 130px;
+            gap: 12px;
+        }
+
+        .tile-layout .glass-card,
+        .tile-layout .dt-glass-card {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            padding: 16px 12px;
+            overflow: hidden;
+        }
+
+        .card-icon-wrap,
+        .card-title,
+        .card-desc {
+            transition: font-size 0.4s var(--spring), width 0.4s var(--spring), height 0.4s var(--spring), margin 0.3s ease;
+        }
+
+        .tile-layout .card-icon-wrap {
+            width: 46px;
+            height: 46px;
+            font-size: 22px;
+        }
+
+        .tile-layout .card-body {
+            flex: none;
+            width: 100%;
+        }
+
+        .tile-layout .card-title {
+            font-size: 13px;
+            margin-bottom: 0;
+            white-space: normal;
+        }
+
+        .tile-layout .card-desc {
+            display: block;
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            font-size: 10px;
+            line-height: 1.35;
+            white-space: normal;
+            transition: max-height 0.3s var(--spring), opacity 0.25s ease, margin-top 0.25s ease;
+        }
+
+        .tile-layout .glass-card:hover .card-desc,
+        .tile-layout .dt-glass-card:hover .card-desc {
+            max-height: 50px;
+            opacity: 1;
+            margin-top: 4px;
+        }
+
+        .tile-layout .card-arrow {
+            display: none;
+        }
+
         .glass-card:active {
             transform: translateY(0) scale(0.99);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -682,6 +920,21 @@
             }
         }
 
+        .theme-transition-veil {
+            position: fixed;
+            inset: 0;
+            background: #050508;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+
+        .theme-transition-veil.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         .app-library-page {
             position: fixed;
             inset: 0;
@@ -698,6 +951,25 @@
         
         .app-library-page.open {
             transform: translateX(0);
+        }
+
+        @media (min-width: 1024px) {
+            .app-library-page {
+                top: 24px;
+                right: 24px;
+                bottom: 24px;
+                left: auto;
+                width: 480px;
+                max-width: calc(100vw - 48px);
+                border-radius: var(--r-xl);
+                border: 1px solid var(--border);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                background:
+                    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(124, 158, 247, 0.07) 0%, transparent 70%),
+                    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(167, 139, 250, 0.06) 0%, transparent 70%),
+                    rgba(7, 7, 15, 0.55);
+                transform: translateX(calc(100% + 24px));
+            }
         }
 
         .library-container {
@@ -729,6 +1001,69 @@
         @media (min-width: 600px) {
             .library-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .library-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-auto-rows: 140px;
+                gap: 14px;
+            }
+
+            .library-grid .list-item {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+                padding: 18px 14px;
+                transition: transform 0.3s var(--spring), background 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease;
+                overflow: hidden;
+            }
+
+            .library-grid .list-item:hover {
+                transform: scale(1.12);
+                z-index: 5;
+                background: var(--surface-hover);
+                border-color: var(--border-strong);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+            }
+
+            .library-grid .item-icon {
+                font-size: 30px;
+            }
+
+            .library-grid .item-content {
+                flex: none;
+                width: 100%;
+            }
+
+            .library-grid .item-title {
+                font-size: 13px;
+                margin-bottom: 0;
+                white-space: normal;
+            }
+
+            .library-grid .item-subtitle {
+                display: block;
+                max-height: 0;
+                opacity: 0;
+                margin-top: 0;
+                font-size: 10.5px;
+                line-height: 1.4;
+                transition: max-height 0.3s var(--spring), opacity 0.25s ease, margin-top 0.25s ease;
+                overflow: hidden;
+            }
+
+            .library-grid .list-item:hover .item-subtitle {
+                max-height: 60px;
+                opacity: 1;
+                margin-top: 6px;
+            }
+
+            .library-grid .item-arrow {
+                display: none;
             }
         }
 
@@ -869,6 +1204,28 @@
             border-radius: 4px;
         }
 
+        .app-library-page,
+        #settings-page,
+        #download-page {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .app-library-page::-webkit-scrollbar,
+        #settings-page::-webkit-scrollbar,
+        #download-page::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
+        }
+
+        .app-library-page::-webkit-scrollbar-thumb,
+        #settings-page::-webkit-scrollbar-thumb,
+        #download-page::-webkit-scrollbar-thumb {
+            background: transparent;
+            border: none;
+        }
+
         @media (min-width: 1024px) {
             body {
                 overflow: hidden;
@@ -888,6 +1245,7 @@
                 height: 100vh;
                 position: relative;
                 z-index: 2;
+                gap: 24px;
             }
 
             .desktop-left {
@@ -896,11 +1254,14 @@
                 flex-direction: column;
                 justify-content: center;
                 padding: 52px 40px 52px 52px;
-                border-right: 1px solid var(--border);
-                background: rgba(8, 8, 18, 0.08);
-                backdrop-filter: blur(44px);
+                background: var(--surface-0);
+                border: 1px solid var(--border);
+                border-radius: var(--r-xl);
+                backdrop-filter: var(--blur-md);
+                -webkit-backdrop-filter: var(--blur-md);
                 position: relative;
                 overflow: hidden;
+                margin: 24px 0 24px 24px;
             }
 
             .desktop-left::before {
@@ -1127,43 +1488,45 @@
             }
         }
 
-        html.prism-installed #pwa-status {
-            position: fixed;
-            bottom: 90px;
-            right: 24px;
-            z-index: 1100;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 7px 13px;
-            border-radius: var(--r-pill);
-            background: var(--surface-1);
-            border: 1px solid var(--border);
-            backdrop-filter: var(--blur-sm);
-            -webkit-backdrop-filter: var(--blur-sm);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-sub);
-            pointer-events: none;
-            opacity: 0;
-            transform: translateY(6px) scale(0.95);
-            transition: opacity 0.3s var(--ease-out), transform 0.3s var(--spring);
+        @media (display-mode: standalone) {
+            #pwa-status {
+                position: fixed;
+                bottom: 72px;
+                right: 24px;
+                z-index: 1100;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                padding: 7px 13px;
+                border-radius: var(--r-pill);
+                background: var(--surface-1);
+                border: 1px solid var(--border);
+                backdrop-filter: var(--blur-sm);
+                -webkit-backdrop-filter: var(--blur-sm);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--text-sub);
+                pointer-events: none;
+                opacity: 0;
+                transform: translateY(6px) scale(0.95);
+                transition: opacity 0.3s var(--ease-out), transform 0.3s var(--spring);
+            }
+            #pwa-status.visible {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            #pwa-status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                transition: background 0.4s ease;
+            }
+            #pwa-status.online #pwa-status-dot  { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.55); }
+            #pwa-status.offline #pwa-status-dot { background: #f87171; box-shadow: 0 0 6px rgba(248,113,113,0.55); }
         }
-        html.prism-installed #pwa-status.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        html.prism-installed #pwa-status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            transition: background 0.4s ease;
-        }
-        html.prism-installed #pwa-status.online #pwa-status-dot  { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.55); }
-        html.prism-installed #pwa-status.offline #pwa-status-dot { background: #f87171; box-shadow: 0 0 6px rgba(248,113,113,0.55); }
-
+        
         @media (max-width: 1023px) {
             .list-item-disabled {
                 opacity: 0.38;
@@ -1266,6 +1629,25 @@
             box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
         }
 
+        @media (min-width: 1024px) {
+            #settings-page {
+                top: 24px;
+                right: 24px;
+                bottom: 24px;
+                left: auto;
+                width: 480px;
+                max-width: calc(100vw - 48px);
+                border-radius: var(--r-xl);
+                border: 1px solid var(--border);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                background:
+                    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(124, 158, 247, 0.07) 0%, transparent 70%),
+                    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(167, 139, 250, 0.06) 0%, transparent 70%),
+                    rgba(7, 7, 15, 0.55);
+                transform: translateX(calc(100% + 24px));
+            }
+        }
+
         .back-btn {
             display: flex;
             align-items: center;
@@ -1294,6 +1676,18 @@
             background: rgba(7, 7, 15, 0.98);
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
+        }
+
+        body.reduce-blur .credits-dialog {
+            background: rgba(7, 7, 15, 0.97);
+        }
+
+        body.reduce-blur .credits-backdrop {
+            background: rgba(5, 5, 10, 0.82);
+        }
+
+        body.reduce-blur .credits-entry {
+            background: rgba(20, 20, 36, 0.9);
         }
 
         body.reduce-blur * {
@@ -1336,6 +1730,21 @@
         #download-page.open {
             transform: translateX(0);
         }
+
+        @media (min-width: 1024px) {
+            #download-page {
+                top: 24px;
+                right: 24px;
+                bottom: 24px;
+                left: auto;
+                width: 480px;
+                max-width: calc(100vw - 48px);
+                border-radius: var(--r-xl);
+                border: 1px solid var(--border);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                transform: translateX(calc(100% + 24px));
+            }
+        }
         .dl-icon-wrap {
             position: absolute;
             z-index: 3;
@@ -1375,6 +1784,7 @@
         .dl-pipeline-row {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.06);
@@ -1433,6 +1843,59 @@
         .dl-pipeline-row.active .dl-phase-status { color: var(--primary); }
         .dl-pipeline-row.done .dl-phase-status   { color: #4ade80; }
         .dl-pipeline-row.error .dl-phase-status  { color: #f87171; }
+
+        .dl-phase-bar {
+            flex-basis: 100%;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .dl-phase-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.25s linear;
+        }
+
+        .dl-pipeline-row.done .dl-phase-bar-fill  { background: #4ade80; }
+        .dl-pipeline-row.error .dl-phase-bar-fill { background: #f87171; }
+
+        .dl-skip-btn {
+            display: none;
+            margin-top: 26px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 11px 24px;
+            border-radius: var(--r-pill);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.25s var(--spring);
+        }
+
+        .dl-skip-btn.show {
+            display: inline-block;
+            animation: fade-up 0.4s var(--ease-out);
+        }
+
+        .dl-skip-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+
+        .dl-skip-btn:active {
+            transform: translateY(0) scale(0.97);
+        }
 
         #gif-custom-url-wrap {
             display: none;
@@ -1519,17 +1982,9 @@
             font-size: 20px;
         }
 
-        @media (max-width: 599px) {
+        @media (max-width: 1023px) {
             .shaman-socials-bar {
-                bottom: 20px !important;
-                right: 20px !important;
-            }
-            .shaman-social-item {
-                width: 34px;
-                height: 34px;
-            }
-            .shaman-social-item .material-icons-round {
-                font-size: 18px;
+                display: none !important;
             }
         }
 
@@ -1539,10 +1994,12 @@
             }
         }
 
-        html:not(.prism-installed) #recache-btn,
-        html:not(.prism-installed) .storage-heading,
-        html:not(.prism-installed) .developer-heading {
-            display: none !important;
+        @media not (display-mode: standalone) {
+            #recache-btn,
+            .storage-heading,
+            .developer-heading {
+                display: none !important;
+            }
         }
 
         @keyframes enter-down {
@@ -1619,8 +2076,10 @@
             text-shadow: 0 0 6px var(--primary-glow);
         }
 
-        html:not(.prism-installed) #recache-game-toggle {
-            display: none !important;
+        @media not (display-mode: standalone) {
+            #recache-game-toggle {
+                display: none !important;
+            }
         }
 
         .changelog-trigger {
@@ -1683,7 +2142,217 @@
         }
 
         #dev-preview-toggle { display: none; }
-        html.prism-installed #dev-preview-toggle { display: flex; }
+        @media (display-mode: standalone) {
+            #dev-preview-toggle { display: flex; }
+        }
+
+        @media (min-width: 1024px) {
+            #changelog-trigger-desktop .changelog-bubble {
+                position: absolute;
+                bottom: calc(100% + 10px);
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--surface-1);
+                border: 1px solid var(--border-accent);
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px;
+                font-weight: 500;
+                white-space: nowrap;
+                padding: 9px 14px;
+                border-radius: var(--r-md);
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+                animation: bubble-pop 0.4s var(--spring);
+                pointer-events: none;
+            }
+
+            #changelog-trigger-desktop .changelog-bubble-arrow {
+                position: absolute;
+                bottom: -5px;
+                left: 50%;
+                margin-left: -5px;
+                width: 10px;
+                height: 10px;
+                background: var(--surface-1);
+                border-right: 1px solid var(--border-accent);
+                border-bottom: 1px solid var(--border-accent);
+                transform: rotate(45deg);
+            }
+        }
+
+        .credits-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            margin-top: 40px;
+            padding: 9px 18px;
+            border-radius: var(--r-pill);
+            background: linear-gradient(135deg, rgba(124, 158, 247, 0.16), rgba(167, 139, 250, 0.16));
+            border: 1px solid var(--border-accent);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: lowercase;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--spring), box-shadow 0.25s var(--ease-out), border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .credits-pill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .credits-pill:hover {
+            transform: translateY(-2px) scale(1.04);
+            border-color: var(--border-strong);
+            box-shadow: 0 8px 24px var(--primary-glow);
+            background: linear-gradient(135deg, rgba(124, 158, 247, 0.24), rgba(167, 139, 250, 0.24));
+        }
+
+        .credits-pill:active {
+            transform: translateY(0) scale(0.97);
+        }
+
+        .credits-pill .material-icons-round {
+            font-size: 16px;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+            transition: color 0.2s ease;
+        }
+
+        .credits-pill:hover .material-icons-round {
+            color: var(--secondary);
+        }
+
+        .credits-pill span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .credits-dialog-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 10, 0.55);
+            backdrop-filter: var(--blur-sm);
+            z-index: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .credits-dialog-backdrop.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .credits-dialog {
+            position: fixed;
+            bottom: 88px;
+            right: 48px;
+            width: 340px;
+            max-width: calc(100vw - 40px);
+            max-height: 70vh;
+            background: var(--surface-0);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--r-lg);
+            backdrop-filter: var(--blur-lg);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
+            z-index: 601;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateY(16px) scale(0.94);
+            opacity: 0;
+            pointer-events: none;
+            transform-origin: bottom right;
+            transition: transform 0.35s var(--spring), opacity 0.25s ease;
+        }
+
+        .credits-dialog.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media (max-width: 1023px) {
+            .credits-dialog {
+                bottom: auto;
+                right: auto;
+                top: 50%;
+                left: 50%;
+                width: calc(100vw - 32px);
+                max-width: 380px;
+                max-height: 80vh;
+                transform: translate(-50%, calc(-50% + 16px)) scale(0.94);
+                transform-origin: center;
+            }
+            .credits-dialog.open {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .credits-dialog-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .credits-dialog-sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 18px;
+        }
+
+        .credits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .credits-entry {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(20, 20, 36, 0.5);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            text-decoration: none;
+            color: var(--text);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.25s var(--spring);
+        }
+
+        .credits-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--surface-1);
+        }
+
+        .credits-name {
+            font-size: 13.5px;
+            font-weight: 600;
+        }
+
+        .credits-role {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
 
     </style>
 </head>
@@ -1693,17 +2362,18 @@
     <video id="bg-video" autoplay loop muted playsinline style="display: none; position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.5; pointer-events: none; filter: brightness(0.75) saturate(0.6);"></video>
     <div class="bg-overlay"></div>
     <div id="cursor-glow"></div>
+    <div class="theme-transition-veil" id="theme-veil"></div>
 
     <div id="startup-loader">
         <div class="loader-bg-pulse"></div>
         <div class="loader-ring-wrap" id="loader-ring">
             <div class="loader-ring"></div>
             <div class="loader-ring-2"></div>
-            <img src="https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo.png" alt="..." class="loader-logo">
+            <img src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png" alt="..." class="loader-logo">
         </div>
         <div class="loader-wordmark" id="loader-wordmark">
-            <div class="loader-wordmark-name">NOCTURNE</div>
-            <div class="loader-wordmark-sub">Studios</div>
+            <div class="loader-wordmark-name">project</div>
+            <div class="loader-wordmark-sub">prism</div>
         </div>
         <div class="loader-bar-wrap" id="loader-bar-wrap">
             <div class="loader-bar" id="loader-bar"></div>
@@ -1714,7 +2384,7 @@
             font-size: 10px;
             font-weight: 600;
             letter-spacing: 3px;
-            text-transform: uppercase;
+            text-transform: lowercase;
             color: rgba(200,202,228,0.38);
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -1729,50 +2399,56 @@
         <div class="mobile-layout">
             <div class="topbar">
                 <a href="#" class="topbar-brand">
-                    <img src="https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo2.png" alt="..." class="topbar-logo">
-                    <span class="topbar-name">PRISM</span>
+                    <img src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo2.png" alt="..." class="topbar-logo">
+                    <span class="topbar-name" style="text-transform: lowercase;">prism</span>
                 </a>
-                <div class="topbar-badge">Main</div>
             </div>
 
-            <div class="hero-card">
-                <div class="hero-card-glow"></div>
+            <div class="hero-card-lite" id="hero-card-lite">
                 <div class="hero-header">
                     <div class="hero-avatar-wrap">
-                        <img src="https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo.png" alt="..." class="hero-avatar">
+                        <img src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png" alt="..." class="hero-avatar">
                     </div>
                     <div class="hero-text">
-                        <h1 class="hero-title">NOCTURNE Studios</h1>
+                        <h1 class="hero-title" style="text-transform: lowercase;">project prism</h1>
                         <div class="hero-status">
                             <span class="status-dot"></span>
-                            Active Development
+                            cooking up stuff
                         </div>
                     </div>
                 </div>
                 <div class="hero-divider"></div>
                 <p class="hero-desc">
-                    NOCTURNE's <strong>Prism</strong>, an all-in-one hub for every projects made for everyone.
+                    welcome to <strong>prism</strong>. this is our central hub where all our experiments, games, and handy tools live together.
                 </p>
-                <a href="https://github.com/nocturnestu" target="_blank" class="cta-btn" onclick="createRipple(event)">
+                <a href="https://github.com/monsieurshaman/project-prism" target="_blank" class="cta-btn" onclick="createRipple(event)">
                     <i class="material-icons-round">code</i>
-                    Our GitHub Repositories
+                    browse prism's repo
                 </a>
-                <button class="install-btn" id="pwa-install-btn-mobile" onclick="triggerPWAInstall(); createRipple(event)" style="display:none;">
-                    <i class="material-icons-round">download</i>
-                    Install Prism App
-                </button>
-                <a href="#" class="changelog-trigger" id="changelog-trigger-mobile"
-                    onclick="openModal('modal-changelog'); createRipple(event); return false;" style="display:none; margin-top:12px;">
-                    <i class="material-icons-round">new_releases</i>
-                    <span>See what's new to Prism</span>
-                </a>
-                <div class="settings-trigger" onclick="toggleSettings()" style="top: 10px; right: 10px;">
+            </div>
+
+            <div class="bottombar">
+                <div class="bottombar-item" onclick="toggleSettings()" title="settings">
                     <i class="material-icons-round">settings</i>
                 </div>
+                <button class="bottombar-item" id="pwa-install-btn-mobile" onclick="triggerPWAInstall(); createRipple(event)" style="display:none;" title="grab the app">
+                    <i class="material-icons-round">download</i>
+                </button>
+                <a href="#" class="bottombar-item" id="changelog-trigger-mobile"
+                    onclick="dismissChangelogBubble(); openModal('modal-changelog'); createRipple(event); return false;" style="display:none;" title="what's fresh?">
+                    <i class="material-icons-round">notifications</i>
+                    <div class="changelog-bubble" id="changelog-bubble" style="display:none;">
+                        new update dropped 👀
+                        <div class="changelog-bubble-arrow"></div>
+                    </div>
+                </a>
+                <a href="https://www.instagram.com/da.real.mastershaman?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="bottombar-item" title="master shaman instagram">
+                    <i class="material-icons-round">construction</i>
+                </a>
             </div>
 
             <div class="section-header">
-                <span class="section-label">Projects</span>
+                <span class="section-label" style="text-transform: lowercase;">the stash</span>
                 <span class="section-line"></span>
             </div>
 
@@ -1782,8 +2458,8 @@
                         <i class="material-icons-round">view_in_ar</i>
                     </div>
                     <div class="card-body">
-                        <div class="card-title">Games</div>
-                        <div class="card-desc">Fun Interactive Worlds</div>
+                        <div class="card-title">games</div>
+                        <div class="card-desc">interactive playgrounds & worlds</div>
                     </div>
                     <i class="material-icons-round card-arrow">chevron_right</i>
                 </div>
@@ -1792,8 +2468,8 @@
                         <i class="material-icons-round">widgets</i>
                     </div>
                     <div class="card-body">
-                        <div class="card-title">Apps & Utilities</div>
-                        <div class="card-desc">Other NOCTURNE Works</div>
+                        <div class="card-title">apps & oddities</div>
+                        <div class="card-desc">fun web experiments and side builds</div>
                     </div>
                     <i class="material-icons-round card-arrow">chevron_right</i>
                 </div>
@@ -1802,61 +2478,65 @@
                         <i class="material-icons-round">build</i>
                     </div>
                     <div class="card-body">
-                        <div class="card-title">Tools</div>
-                        <div class="card-desc">Essentials</div>
+                        <div class="card-title">tools</div>
+                        <div class="card-desc">actual handy utilities</div>
                     </div>
                     <i class="material-icons-round card-arrow">chevron_right</i>
                 </div>
             </div>
 
-            <div class="fs-footer">NOCTURNE Studios // Project Prism</div>
+            <div class="fs-footer" style="text-transform: lowercase;">project prism by monsieurshaman on github/discord!!</div>
         </div>
 
         <div class="desktop-layout">
             <div class="desktop-left">
                 <div class="dt-topbar">
                     <a href="#" class="dt-brand">
-                        <img src="https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo2.png" alt="..." class="dt-logo">
-                        <span class="dt-brand-name">PRISM</span>
+                        <img src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo2.png" alt="..." class="dt-logo">
+                        <span class="dt-brand-name" style="text-transform: lowercase;">prism</span>
                     </a>
-                    <div class="dt-badge">Main</div>
+                    <div class="dt-badge" style="text-transform: lowercase;">home base</div>
                 </div>
 
                 <div class="dt-hero-avatar-wrap">
-                    <img src="https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo.png" alt="..." class="dt-hero-avatar">
+                    <img src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png" alt="..." class="dt-hero-avatar">
                 </div>
 
-                <h1 class="dt-hero-title">NOCTURNE Studios</h1>
+                <h1 class="dt-hero-title" style="text-transform: lowercase;">project prism</h1>
                 <div class="dt-hero-status">
                     <span class="status-dot"></span>
-                    Active Development
+                    cooking up stuff
                 </div>
                 <div class="dt-divider"></div>
                 <p class="dt-hero-desc">
-                    NOCTURNE's <strong>Prism</strong>, an all-in-one hub for every projects made for everyone.
+                    welcome to <strong>prism</strong>. this is our central hub where all our experiments, games, and handy tools live together.
                 </p>
-                <a href="https://github.com/nocturnestu" target="_blank" class="cta-btn" onclick="createRipple(event)">
+                <a href="https://github.com/monsieurshaman/project-prism" target="_blank" class="cta-btn" onclick="createRipple(event)">
                     <i class="material-icons-round">code</i>
-                    Our GitHub Repositories
+                    browse prism's repo
                 </a>
                 <button class="install-btn" id="pwa-install-btn-desktop" onclick="triggerPWAInstall(); createRipple(event)" style="display:none;">
                     <i class="material-icons-round">download</i>
-                    Install Prism App
+                    grab the app
                 </button>
-                <a href="#" class="changelog-trigger" id="changelog-trigger-desktop"
-                    onclick="openModal('modal-changelog'); createRipple(event); return false;" style="display:none; margin-top:20px;">
-                    <i class="material-icons-round">new_releases</i>
-                    <span>See what's new to Prism</span>
-                </a>
+                <button class="notifs-btn" id="changelog-trigger-desktop"
+                    onclick="dismissChangelogBubble(); openModal('modal-changelog'); createRipple(event);">
+                    <i class="material-icons-round">notifications</i>
+                    prism updates
+                    <div class="changelog-bubble" id="changelog-bubble-desktop" style="display:none;">
+                        new update dropped 👀
+                        <div class="changelog-bubble-arrow"></div>
+                    </div>
+                </button>
                 <div class="settings-trigger" onclick="toggleSettings()" style="top: 40px; right: 40px;">
                     <i class="material-icons-round">settings</i>
                 </div>
-                <div class="dt-footer">NOCTURNE Studios // Project Prism</div>
+                <div class="dt-footer" style="text-transform: lowercase;">project prism by monsieurshaman on github/discord!!</div>
             </div>
 
             <div class="desktop-right">
                 <div class="dt-section-header">
-                    <span class="dt-section-label">Projects</span>
+                    <span class="dt-section-label" style="text-transform: lowercase;">the stash</span>
                     <span class="dt-section-line"></span>
                 </div>
 
@@ -1866,8 +2546,8 @@
                             <i class="material-icons-round">videogame_asset</i>
                         </div>
                         <div class="card-body">
-                            <div class="card-title">Games</div>
-                            <div class="card-desc">Fun Interactive Worlds</div>
+                            <div class="card-title">games</div>
+                            <div class="card-desc">interactive playgrounds & worlds</div>
                         </div>
                         <i class="material-icons-round card-arrow">chevron_right</i>
                     </div>
@@ -1876,8 +2556,8 @@
                             <i class="material-icons-round">widgets</i>
                         </div>
                         <div class="card-body">
-                            <div class="card-title">Apps & Utilities</div>
-                            <div class="card-desc">Experimental Web Pages</div>
+                            <div class="card-title">apps & oddities</div>
+                            <div class="card-desc">fun web experiments and side builds</div>
                         </div>
                         <i class="material-icons-round card-arrow">chevron_right</i>
                     </div>
@@ -1886,8 +2566,8 @@
                             <i class="material-icons-round">build</i>
                         </div>
                         <div class="card-body">
-                            <div class="card-title">Tools</div>
-                            <div class="card-desc">Essentials</div>
+                            <div class="card-title">tools</div>
+                            <div class="card-desc">actual handy utilities</div>
                         </div>
                         <i class="material-icons-round card-arrow">chevron_right</i>
                     </div>
@@ -1896,11 +2576,8 @@
         </div>
 
         <div class="shaman-socials-bar">
-            <a href="https://www.instagram.com/da.real.mastershaman?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="shaman-social-item" title="Master Shaman (Instagram)">
+            <a href="https://www.instagram.com/da.real.mastershaman?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="shaman-social-item" title="master shaman instagram">
                 <span class="material-icons-round">construction</span>
-            </a>
-            <a href="https://www.instagram.com/nocturne.stu?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="shaman-social-item" title="NOCTURNE Studios (Instagram)">
-                <span class="material-icons-round">hub</span>
             </a>
         </div>
 
@@ -1909,19 +2586,19 @@
     <div id="modal-3d" class="app-library-page">
         <div class="library-container">
             <div class="back-btn" onclick="closeAllModals()">
-                <i class="material-icons-round">arrow_back</i> Back
+                <i class="material-icons-round">arrow_back</i> back
             </div>
             <div class="library-header-wrap">
-                <h2 class="library-title">Games</h2>
+                <h2 class="library-title">games</h2>
             </div>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Our main stars of NOCTURNE, heavily maintained to be stable just for you.</p>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">the flagship stuff we keep polished just for you.</p>
     
             <div class="library-grid">
                 <a href="./SandBox3D/sb3d_page" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">view_in_ar</i>
                     <div class="item-content">
-                        <div class="item-title">Sand Box 3D</div>
-                        <div class="item-subtitle">Interactive 3D Physics Sandbox</div>
+                        <div class="item-title">sand box 3d</div>
+                        <div class="item-subtitle">mess around with 3d physics</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
@@ -1929,8 +2606,8 @@
                     onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">track_changes</i>
                     <div class="item-content">
-                        <div class="item-title">Rift Runners 2D</div>
-                        <div class="item-subtitle">Top-down 2D Survival Game (PC Only)</div>
+                        <div class="item-title">rift runners 2d</div>
+                        <div class="item-subtitle">top-down survival mayhem (pc only)</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
@@ -1941,16 +2618,16 @@
     <div id="modal-changelog" class="app-library-page">
         <div class="library-container">
             <div class="back-btn" onclick="closeAllModals()">
-                <i class="material-icons-round">arrow_back</i> Back
+                <i class="material-icons-round">arrow_back</i> back
             </div>
             <div class="library-header-wrap">
-                <h2 class="library-title">Prism Changelogs</h2>
+                <h2 class="library-title">prism updates</h2>
             </div>
             <div class="changelog-modal-body">
-                <div class="changelog-version-badge" id="cl-modal-version">Thinking...</div>
-                <h3 class="changelog-modal-title" id="cl-modal-title">Thinking...</h3>
+                <div class="changelog-version-badge" id="cl-modal-version">checking...</div>
+                <h3 class="changelog-modal-title" id="cl-modal-title">checking...</h3>
                 <p class="changelog-modal-text" id="cl-modal-msg">
-                    Thinking...
+                    checking...
                 </p>
             </div>
         </div>
@@ -1959,68 +2636,68 @@
     <div id="modal-other" class="app-library-page">
         <div class="library-container">
             <div class="back-btn" onclick="closeAllModals()">
-                <i class="material-icons-round">arrow_back</i> Back
+                <i class="material-icons-round">arrow_back</i> back
             </div>
             <div class="library-header-wrap">
-                <h2 class="library-title">Apps & Utilities</h2>
+                <h2 class="library-title">apps & oddities</h2>
             </div>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Experimental apps.</p>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">random, fun web experiments.</p>
     
             <div class="library-grid">
                 <a href="./Other/ismycompteureron" class="list-item"
                     onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Is My Compooper On?</div>
-                        <div class="item-subtitle">Checks whether your 'Compooper' is ON or nah</div>
+                        <div class="item-title">is my compooper on?</div>
+                        <div class="item-subtitle">a quick sanity check for your setup</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/devcheck" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Device Checker</div>
-                        <div class="item-subtitle">See your user-agent in stats</div>
+                        <div class="item-title">device checker</div>
+                        <div class="item-subtitle">see what your user-agent says about you</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/notmoving" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Objects Move or Nah</div>
-                        <div class="item-subtitle">ThreeJS Simulation (just cubes)</div>
+                        <div class="item-title">do cubes move or nah?</div>
+                        <div class="item-subtitle">just a simple three.js cube test</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/gifview" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">GIF Viewer</div>
-                        <div class="item-subtitle">View GIFs by their links</div>
+                        <div class="item-title">gif viewer</div>
+                        <div class="item-subtitle">inspect gifs directly via link</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/mathlol" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Math or DIE</div>
-                        <div class="item-subtitle">Random Math Generator</div>
+                        <div class="item-title">math or die</div>
+                        <div class="item-subtitle">rapid-fire math problem generator</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/coinsort" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Coin Sort</div>
-                        <div class="item-subtitle">Coin Sorting Game</div>
+                        <div class="item-title">coin sort</div>
+                        <div class="item-subtitle">a simple coin sorting game</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
                 <a href="./Other/websend" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">web_asset</i>
                     <div class="item-content">
-                        <div class="item-title">Webhook Transit</div>
-                        <div class="item-subtitle">A transit for Discord webhooks</div>
+                        <div class="item-title">webhook transit</div>
+                        <div class="item-subtitle">quick discord webhook messenger</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
@@ -2031,19 +2708,19 @@
     <div id="modal-tools" class="app-library-page">
         <div class="library-container">
             <div class="back-btn" onclick="closeAllModals()">
-                <i class="material-icons-round">arrow_back</i> Back
+                <i class="material-icons-round">arrow_back</i> back
             </div>
             <div class="library-header-wrap">
-                <h2 class="library-title">Tools</h2>
+                <h2 class="library-title">tools</h2>
             </div>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Essential tools tailored for you.</p>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">handy utilities built to make stuff easier.</p>
     
             <div class="library-grid">
                 <a href="./Tools/lapscan" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">build</i>
                     <div class="item-content">
-                        <div class="item-title">LAPSCAN</div>
-                        <div class="item-subtitle">Variance of Laplacian Scanner</div>
+                        <div class="item-title">lapscan</div>
+                        <div class="item-subtitle">variance of laplacian image scanner</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
@@ -2051,8 +2728,8 @@
                 <a href="./Tools/pixelpeek" class="list-item" onclick="createRipple(event)">
                     <i class="material-icons-round item-icon">build</i>
                     <div class="item-content">
-                        <div class="item-title">PixelPeek</div>
-                        <div class="item-subtitle">Image Metadata Inspector</div>
+                        <div class="item-title">pixelpeek</div>
+                        <div class="item-subtitle">image metadata inspector</div>
                     </div>
                     <i class="material-icons-round item-arrow">chevron_right</i>
                 </a>
@@ -2068,19 +2745,19 @@
 
     <div id="settings-page">
         <div class="back-btn" onclick="toggleSettings()">
-            <i class="material-icons-round">arrow_back</i> Back
+            <i class="material-icons-round">arrow_back</i> back
         </div>
-        <h1 style="font-family: 'Space Grotesk';">Settings</h1>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;">Prism's settings, tweak whatever you want. All changes take effect before you even notice it.</p>
+        <h1 style="font-family: 'Space Grotesk';">settings</h1>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;">tweak whatever you want. changes kick in right away.</p>
 
         <div style="margin-top: 24px;">
-            <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-bottom: 12px;">Visuals</h3>
+            <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-bottom: 12px;">visuals</h3>
             <div class="list-item" id="gif-toggle-container" style="cursor: pointer; justify-content: space-between;" onclick="if(navigator.onLine) toggleGifBackground()">
                 <div style="display: flex; align-items: center; gap: 14px;">
                     <i class="material-icons-round item-icon">wallpaper</i>
                     <div class="item-content">
-                        <div class="item-title">Background GIF</div>
-                        <div class="item-subtitle" id="bg-status">Enabled</div>
+                        <div class="item-title">gif background</div>
+                        <div class="item-subtitle" id="bg-status">enabled</div>
                     </div>
                 </div>
                 <i class="material-icons-round" id="toggle-icon">toggle_on</i>
@@ -2091,57 +2768,75 @@
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
                     <i class="material-icons-round item-icon">video_settings</i>
                     <div class="item-content">
-                        <div class="item-title">Custom Video Background</div>
-                        <div class="item-subtitle">Upload video file to cache as background</div>
+                        <div class="item-title">video background</div>
+                        <div class="item-subtitle">cache a video file for your background</div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <input type="file" id="video-bg-file-input" accept="video/*" style="display: none;" onclick="this.value = null"
                         onchange="PrismVideoBg.handleUpload(this.files[0])">
                     <button class="setting-select" style="margin-top: 0; flex: 1; text-align: center;"
-                        onclick="document.getElementById('video-bg-file-input').click()">Choose Video</button>
+                        onclick="document.getElementById('video-bg-file-input').click()">pick video</button>
+                    <button class="setting-select" id="video-bg-sound-btn"
+                        style="margin-top: 0; width: auto; display: none;"
+                        title="toggle background video sound" onclick="PrismVideoBg.toggleSound()">
+                        <i class="material-icons-round" id="video-bg-sound-icon" style="font-size: 18px;">volume_off</i>
+                    </button>
                     <button class="setting-select" id="refresh-video-bg-btn"
                         style="margin-top: 0; width: auto; display: none;"
-                        onclick="PrismVideoBg.refreshVideo()">↻ Refresh</button>
+                        onclick="PrismVideoBg.refreshVideo()">reload</button>
                     <button class="setting-select" id="clear-video-bg-btn"
                         style="margin-top: 0; width: auto; display: none; color: #f87171;"
-                        onclick="PrismVideoBg.removeVideo()">Clear</button>
+                        onclick="PrismVideoBg.removeVideo()">clear</button>
+                </div>
+                <div id="video-bg-volume-wrap"
+                    style="display: none; align-items: center; gap: 10px; width: 100%;">
+                    <i class="material-icons-round" style="font-size: 18px; color: var(--text-muted); flex-shrink: 0;">volume_up</i>
+                    <input type="range" id="video-bg-volume" min="0" max="100" step="1" value="50"
+                        style="flex: 1; accent-color: var(--primary); cursor: pointer;"
+                        oninput="PrismVideoBg.setVolume(this.value)">
                 </div>
             </div>
 
-            <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 20px; margin-bottom: 8px;">GIF Presets</h3>
+            <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 20px; margin-bottom: 8px;">gif presets</h3>
             <select id="gif-selector" class="setting-select" onchange="handleGifSelect(this.value)">
-                <option value="gif1">Default GIF</option>
-                <option value="gif2">GIF 1</option>
-                <option value="gif3">GIF 2</option>
-                <option value="gif4">GIF 3</option>
-                <option value="gif5">GIF 4</option>
-                <option value="gif6">GIF 5</option>
-                <option value="custom">"I'll add the link myself" (GIPHY Recommended)</option>
+                <option value="gif1">default gif</option>
+                <option value="gif2">gif 1</option>
+                <option value="gif3">gif 2</option>
+                <option value="gif4">gif 3</option>
+                <option value="gif5">gif 4</option>
+                <option value="gif6">gif 5</option>
+                <option value="custom">add your own (giphy recommended)</option>
             </select>
             <div id="gif-custom-url-wrap">
                 <input id="gif-custom-url-input" type="url" placeholder="https://media.giphy.com/..." />
-                <button id="gif-custom-url-apply" onclick="applyCustomGifUrl()">Apply</button>
+                <button id="gif-custom-url-apply" onclick="applyCustomGifUrl()">apply</button>
             </div>
         </div>
 
-        <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 8px;">Theme Presets</h3>
+        <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 8px;">color themes</h3>
         <select id="theme-selector" class="setting-select" onchange="changeTheme(this.value)">
-            <option value="blurple">Good Vibes (Default)</option>
-            <option value="amber">Bright Amber</option>
-            <option value="emerald">Emerald</option>
-            <option value="ruby">Vibrant Ruby</option>
-            <option value="mono">Nostalgia</option>
+            <option value="blurple">good vibes (default)</option>
+            <option value="amber">bright amber</option>
+            <option value="emerald">emerald</option>
+            <option value="ruby">vibrant ruby</option>
+            <option value="mono">nostalgia</option>
         </select>
 
-        <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 12px;">Performance</h3>
+        <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 8px;">card style</h3>
+        <select id="card-layout-selector" class="setting-select" onchange="changeCardLayout(this.value)">
+            <option value="bar">bar style (default)</option>
+            <option value="tile">tile style</option>
+        </select>
+
+        <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 12px;">performance</h3>
         <div class="list-group">
             <div class="list-item" style="cursor: pointer; justify-content: space-between;"
                 onclick="toggleSetting('reduce-blur')">
                 <div style="display: flex; align-items: center; gap: 14px;">
                     <i class="material-icons-round item-icon">blur_off</i>
                     <div class="item-content">
-                        <div class="item-title">Reduce Blur effects</div>
+                        <div class="item-title">reduce blur effects</div>
                     </div>
                 </div>
                 <i class="material-icons-round" id="icon-reduce-blur">toggle_off</i>
@@ -2150,45 +2845,106 @@
                 <div style="display: flex; align-items: center; gap: 14px;">
                     <i class="material-icons-round item-icon">motion_photos_off</i>
                     <div class="item-content">
-                        <div class="item-title">Reduced motion</div>
+                        <div class="item-title">reduced motion</div>
                     </div>
                 </div>
                 <i class="material-icons-round" id="icon-no-anim">toggle_off</i>
             </div>
         </div>
         
-        <h3 class="storage-heading" style="font-family: 'Space Grotesk'; font-size: 16px; margin-bottom: 12px;">Storage</h3>
+        <h3 class="storage-heading" style="font-family: 'Space Grotesk'; font-size: 16px; margin-bottom: 12px;">storage</h3>
         <button id="recache-btn" class="list-item" style="width: 100%; border: none; cursor: pointer;"
             onclick="confirmAndRecache()">
             <i class="material-icons-round item-icon">refresh</i>
             <div class="item-content">
-                <div class="item-title">Update or Reinstall Prism</div>
-                <div class="item-subtitle">Updates Prism to the latest build, or reinstall it</div>
+                <div class="item-title">update or reinstall prism</div>
+                <div class="item-subtitle">pulls the newest build or gives prism a fresh start</div>
             </div>
         </button>
 
         <div id="recache-game-toggle" onclick="toggleIncludeGames()">
             <i class="material-icons-round" id="icon-include-games">toggle_off</i>
             <div class="item-content">
-                <div class="item-title">Include Additional Assets</div>
-                <div class="item-subtitle">Enabling this allows Prism to update other assets, may consume more data.</div>
+                <div class="item-title">include extra game assets</div>
+                <div class="item-subtitle">caches additional game files (uses more data)</div>
             </div>
         </div>
+        
+        <div id="cleanup-section" style="display: none; margin-top: 12px;">
+            <h3 style="font-family: 'Space Grotesk'; font-size: 16px; margin-bottom: 12px;">cleanup</h3>
+            <button id="cleanup-btn" class="list-item" style="width: 100%; border: none; cursor: pointer;"
+                onclick="confirmAndCleanup()">
+                <i class="material-icons-round item-icon">delete_sweep</i>
+                <div class="item-content">
+                    <div class="item-title">clear leftover cache &amp; storage</div>
+                    <div class="item-subtitle">removes cached data left behind after uninstalling prism</div>
+                </div>
+            </button>
+        </div>
 
-        <h3 class="developer-heading" style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 12px;">Developer</h3>
+        <h3 class="developer-heading" style="font-family: 'Space Grotesk'; font-size: 16px; margin-top: 24px; margin-bottom: 12px;">developer</h3>
         <div class="list-item" id="dev-preview-toggle" style="cursor: pointer; justify-content: space-between;"
             onclick="toggleDevPreviewMode()">
             <div style="display: flex; align-items: center; gap: 14px;">
                 <i class="material-icons-round item-icon">code</i>
                 <div class="item-content">
-                    <div class="item-title">Developer Preview Mode</div>
-                    <div class="item-subtitle">For testing purposes only. Enables experimental/unfinished features.</div>
+                    <div class="item-title">developer preview mode</div>
+                    <div class="item-subtitle">for testing only. unlocks experimental and unfinished stuff.</div>
                 </div>
             </div>
             <i class="material-icons-round" id="icon-dev-preview">toggle_off</i>
         </div>
 
         <div id="sw-version-display" style="display: none; position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: 0.35; font-family: 'Space Grotesk', sans-serif; pointer-events: none; user-select: none;"></div>
+
+        <div class="credits-pill" onclick="toggleCredits()" title="credits">
+            <i class="material-icons-round">favorite</i>
+            <span>credits</span>
+        </div>
+    </div>
+
+    <div class="credits-dialog-backdrop" id="credits-backdrop" onclick="toggleCredits()"></div>
+
+    <div class="credits-dialog" id="credits-dialog">
+        <div class="credits-dialog-title" style="text-transform: lowercase;">credits</div>
+        <div class="credits-dialog-sub">the people behind project prism</div>
+        <div class="credits-list">
+            <a class="credits-entry" href="https://github.com/monsieurshaman" target="_blank" rel="noopener noreferrer">
+                <img class="credits-avatar" src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/monsieurshaman.png" alt="">
+                <div>
+                    <div class="credits-name">monsieurshaman</div>
+                    <div class="credits-role">creator, lead dev, ragebaiter, genshin player, exists on github</div>
+                </div>
+            </a>
+            <a class="credits-entry" href="https://www.youtube.com/@ShinobiAkiraGD" target="_blank" rel="noopener noreferrer">
+                <img class="credits-avatar" src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/shinobiakira.png" alt="">
+                <div>
+                    <div class="credits-name">ShinobiAkira</div>
+                    <div class="credits-role">youtuber, tester, GD player, has beef with atoms, exists on github</div>
+                </div>
+            </a>
+            <a class="credits-entry" href="https://github.com/nokkum" target="_blank" rel="noopener noreferrer">
+                <img class="credits-avatar" src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/haku.png" alt="">
+                <div>
+                    <div class="credits-name">Hakuシ</div>
+                    <div class="credits-role">co-dev, tester, minecraft java modder, exists on github</div>
+                </div>
+            </a>
+            <a class="credits-entry">
+                <img class="credits-avatar" src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png" alt="">
+                <div>
+                    <div class="credits-name">Leo Alexis</div>
+                    <div class="credits-role">honorable mention</div>
+                </div>
+            </a>
+            <a class="credits-entry">
+                <img class="credits-avatar" src="https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png" alt="">
+                <div>
+                    <div class="credits-name">friends at college!</div>
+                    <div class="credits-role">honorable mention</div>
+                </div>
+            </a>
+        </div>
     </div>
 
     <div id="download-page">
@@ -2199,8 +2955,8 @@
             <i class="material-icons-round dl-icon-wrap" id="dl-main-icon">download</i>
         </div>
         <div class="loader-wordmark show" style="opacity: 1; transform: translateY(0);">
-            <div class="loader-wordmark-name" id="dl-phase-title">Download Mode</div>
-            <div class="loader-wordmark-sub" id="dl-phase-sub">Thinking...</div>
+            <div class="loader-wordmark-name" id="dl-phase-title">download mode</div>
+            <div class="loader-wordmark-sub" id="dl-phase-sub">working on it...</div>
         </div>
         <div class="loader-bar-wrap show" style="width: 220px;">
             <div class="loader-bar" id="download-bar"></div>
@@ -2208,21 +2964,31 @@
         <div class="dl-pipeline" id="dl-pipeline">
             <div class="dl-pipeline-row" id="dl-phase-clear">
                 <span class="dl-phase-icon material-icons-round">pending</span>
-                <span class="dl-phase-label">Clear IDB/Cache</span>
-                <span class="dl-phase-status">Pondering...</span>
+                <span class="dl-phase-label">clear cache & storage</span>
+                <span class="dl-phase-status">waiting...</span>
+                <div class="dl-phase-bar"><div class="dl-phase-bar-fill" id="dl-bar-clear"></div></div>
+            </div>
+            <div class="dl-pipeline-row" id="dl-phase-check">
+                <span class="dl-phase-icon material-icons-round">pending</span>
+                <span class="dl-phase-label">check assets</span>
+                <span class="dl-phase-status">waiting...</span>
+                <div class="dl-phase-bar"><div class="dl-phase-bar-fill" id="dl-bar-check"></div></div>
             </div>
             <div class="dl-pipeline-row" id="dl-phase-download">
                 <span class="dl-phase-icon material-icons-round">pending</span>
-                <span class="dl-phase-label">Download files</span>
-                <span class="dl-phase-status">Pondering...</span>
+                <span class="dl-phase-label">download files</span>
+                <span class="dl-phase-status">waiting...</span>
+                <div class="dl-phase-bar"><div class="dl-phase-bar-fill" id="dl-bar-download"></div></div>
             </div>
             <div class="dl-pipeline-row" id="dl-phase-cache">
                 <span class="dl-phase-icon material-icons-round">pending</span>
-                <span class="dl-phase-label">Write them to IDB/Cache</span>
-                <span class="dl-phase-status">Pondering...</span>
+                <span class="dl-phase-label">save to storage</span>
+                <span class="dl-phase-status">waiting...</span>
+                <div class="dl-phase-bar"><div class="dl-phase-bar-fill" id="dl-bar-cache"></div></div>
             </div>
         </div>
-        <div class="dl-tip-box" id="download-tip">All the tips goes here...</div>
+        <div class="dl-tip-box" id="download-tip">loading tips...</div>
+        <button class="dl-skip-btn" id="dl-skip-btn">skip update &amp; restart</button>
     </div>
 
     <script>
@@ -2240,6 +3006,8 @@
             _pwaInstallPrompt = null;
             document.getElementById('pwa-install-btn-mobile').style.display = 'none';
             document.getElementById('pwa-install-btn-desktop').style.display = 'none';
+            localStorage.setItem(CLEANUP_FLAG_KEY, 'true');
+            updateCleanupVisibility();
         });
 
         window.addEventListener('online', () => {
@@ -2251,51 +3019,11 @@
             applyBgState(false);
         });
 
-        window.__PRISM_ENV__ = (function () {
-            function syncInstalledClass(installed) {
-                document.documentElement.classList.toggle('prism-installed', installed);
+        window.__PRISM_ENV__ = {
+            get isStandalone() {
+                return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
             }
-
-            const liveStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-            if (liveStandalone) localStorage.setItem('PRISM_INSTALLED', 'true');
-
-            const flagged = localStorage.getItem('PRISM_INSTALLED') === 'true';
-            syncInstalledClass(flagged);
-
-            if (!flagged && navigator.getInstalledRelatedApps) {
-                navigator.getInstalledRelatedApps().then(apps => {
-                    if (apps.length > 0) {
-                        localStorage.setItem('PRISM_INSTALLED', 'true');
-                        syncInstalledClass(true);
-                    }
-                }).catch(() => { });
-            }
-
-            if (flagged && !liveStandalone && navigator.getInstalledRelatedApps) {
-                navigator.getInstalledRelatedApps().then(apps => {
-                    if (apps.length === 0) {
-                        localStorage.removeItem('PRISM_INSTALLED');
-                        syncInstalledClass(false);
-                    }
-                }).catch(() => { });
-            }
-
-            return {
-                get isStandalone() { return localStorage.getItem('PRISM_INSTALLED') === 'true'; },
-                markInstalled() {
-                    localStorage.setItem('PRISM_INSTALLED', 'true');
-                    syncInstalledClass(true);
-                },
-                unmarkInstalled() {
-                    localStorage.removeItem('PRISM_INSTALLED');
-                    syncInstalledClass(false);
-                }
-            };
-        })();
-
-        window.addEventListener('appinstalled', () => {
-            window.__PRISM_ENV__.markInstalled();
-        });
+        };
 
         function triggerPWAInstall() {
             if (!_pwaInstallPrompt) return;
@@ -2322,12 +3050,28 @@
             icon.style.color = isEnabled ? 'var(--primary)' : 'var(--text-muted)';
         }
 
+        function dismissChangelogBubble() {
+            const bubble = document.getElementById('changelog-bubble');
+            if (bubble) bubble.style.display = 'none';
+            const bubbleDesktop = document.getElementById('changelog-bubble-desktop');
+            if (bubbleDesktop) bubbleDesktop.style.display = 'none';
+
+            fetch('changelog.json?t=' + Date.now(), { cache: 'no-store' })
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.release) {
+                        localStorage.setItem('PRISM_SEEN_CHANGELOG', data.release);
+                    }
+                })
+                .catch(() => { });
+        }
+
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '124, 158, 247';
         }
 
-        function changeTheme(theme) {
+        function applyThemeVars(theme) {
             const root = document.documentElement;
             const themes = {
                 blurple: { primary: '#7c9ef7', secondary: '#a78bfa' },
@@ -2356,11 +3100,79 @@
             localStorage.setItem('prism-theme', theme);
         }
 
+        function changeTheme(theme, animate = true) {
+            if (!animate) {
+                applyThemeVars(theme);
+                return;
+            }
+
+            const veil = document.getElementById('theme-veil');
+            veil.classList.add('active');
+
+            setTimeout(() => {
+                applyThemeVars(theme);
+
+                setTimeout(() => {
+                    veil.classList.remove('active');
+                }, 300);
+            }, 500);
+        }
+
         (function loadSavedTheme() {
             const saved = localStorage.getItem('prism-theme');
             if (saved) {
-                changeTheme(saved);
+                changeTheme(saved, false);
                 document.getElementById('theme-selector').value = saved;
+            }
+        })();
+
+        function changeCardLayout(layout) {
+            const grids = [document.querySelector('.cards-grid'), document.querySelector('.dt-cards-grid')];
+
+            grids.forEach(grid => {
+                if (!grid) return;
+                const cards = Array.from(grid.querySelectorAll('.glass-card, .dt-glass-card'));
+
+                const first = cards.map(c => c.getBoundingClientRect());
+
+                grid.classList.toggle('tile-layout', layout === 'tile');
+
+                const last = cards.map(c => c.getBoundingClientRect());
+
+                cards.forEach((card, i) => {
+                    const dx = first[i].left - last[i].left;
+                    const dy = first[i].top - last[i].top;
+                    const dw = first[i].width / last[i].width;
+                    const dh = first[i].height / last[i].height;
+
+                    card.style.transition = 'none';
+                    card.style.transformOrigin = 'top left';
+                    card.style.transform = `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})`;
+
+                    requestAnimationFrame(() => {
+                        card.style.transition = 'transform 0.5s var(--spring, cubic-bezier(0.34, 1.56, 0.64, 1))';
+                        card.style.transform = 'translate(0, 0) scale(1, 1)';
+                        card.style.transitionDelay = `${i * 30}ms`;
+                    });
+
+                    card.addEventListener('transitionend', function cleanup() {
+                        card.style.transition = '';
+                        card.style.transform = '';
+                        card.style.transformOrigin = '';
+                        card.style.transitionDelay = '';
+                        card.removeEventListener('transitionend', cleanup);
+                    });
+                });
+            });
+
+            localStorage.setItem('prism-card-layout', layout);
+        }
+
+        (function loadSavedCardLayout() {
+            const saved = localStorage.getItem('prism-card-layout');
+            if (saved) {
+                changeCardLayout(saved);
+                document.getElementById('card-layout-selector').value = saved;
             }
         })();
 
@@ -2393,17 +3205,32 @@
             window.dispatchEvent(new CustomEvent('dev-preview-change', { detail: { enabled: value === 'true' } }));
         }
 
+        (function syncDevPreviewToInstallState() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+            if (!isStandalone) {
+                if (localStorage.getItem(DEV_PREVIEW_KEY) !== 'false') {
+                    setDevPreviewMode('false');
+                }
+                return;
+            }
+
+            if (localStorage.getItem(DEV_PREVIEW_KEY) === null) {
+                setDevPreviewMode('true');
+            }
+        })();
+
         function toggleDevPreviewMode() {
             const isCurrentlyOn = localStorage.getItem(DEV_PREVIEW_KEY) === 'true';
             const icon = document.getElementById('icon-dev-preview');
 
             if (!isCurrentlyOn) {
-                if (!confirm('Prism Developer Preview Mode\n\nThis enables experimental/unfinished features intended for testing purposes only. Things may break.\n\nProceed?')) return;
+                if (!confirm('Prism Developer Preview Mode\n\nThis enables features that are hidden across Prism and other apps. Do you wish to proceed?')) return;
                 setDevPreviewMode('true');
                 icon.textContent = 'toggle_on';
                 icon.style.color = 'var(--primary)';
             } else {
-                if (!confirm('Prism Developer Preview Mode?\n\nThis will turn off experimental/testing features across Prism. Proceed?')) return;
+                if (!confirm('Prism Developer Preview Mode\n\nThis disables Developer Preview Mode. Do you wish to proceed?')) return;
                 setDevPreviewMode('false');
                 icon.textContent = 'toggle_off';
                 icon.style.color = 'var(--text-muted)';
@@ -2425,9 +3252,81 @@
             }
         })();
 
+        const CLEANUP_FLAG_KEY = 'PRISM_NEEDS_CACHE_CLEANUP';
+        const STORAGE_CLEARED_KEY = 'PRISM_STORAGE_CLEARED';
+
+        function updateCleanupVisibility() {
+            const section = document.getElementById('cleanup-section');
+            if (!section) return;
+            section.style.display = localStorage.getItem(CLEANUP_FLAG_KEY) === 'true' ? 'block' : 'none';
+        }
+
+        (function initCleanupFlag() {
+            if (window.__PRISM_ENV__.isStandalone) {
+                localStorage.setItem(CLEANUP_FLAG_KEY, 'true');
+            }
+            updateCleanupVisibility();
+        })();
+
+        (function checkStorageClearedPartition() {
+            if (!window.__PRISM_ENV__.isStandalone) return;
+            if (localStorage.getItem(STORAGE_CLEARED_KEY) !== 'true') return;
+
+            setTimeout(() => {
+                const proceed = confirm(
+                    'Prism Storage Manager\n\n' +
+                    'Prism\'s files are currently missing...\n' +
+                    'You may have used "clear leftover cache & storage" accidentally while Prism is still installed.\n\n' +
+                    'Do you want to fetch new files now?\n\n' +
+                    'OK to download — Cancel to skip.'
+                );
+                localStorage.removeItem(STORAGE_CLEARED_KEY);
+                if (proceed) confirmAndRecache();
+            }, 3400);
+        })();
+
+        async function confirmAndCleanup() {
+            if (!confirm('Prism Storage Manager\n\nThis will clear files for you after you\'ve uninstalled Prism. Do you wish to proceed?\n\nIf you\'re still in Prism or have it installed and met this prompt, you can click CANCEL to do nothing.')) return;
+
+            try {
+                if ('caches' in window) {
+                    const names = await caches.keys();
+                    await Promise.all(names.map(n => caches.delete(n)));
+                }
+
+                if (indexedDB.databases) {
+                    const dbs = await indexedDB.databases();
+                    await Promise.all(dbs.map(d => d && d.name ? new Promise(res => {
+                        const req = indexedDB.deleteDatabase(d.name);
+                        req.onsuccess = req.onerror = req.onblocked = () => res();
+                    }) : Promise.resolve()));
+                } else {
+                    await Promise.all(['PrismDB', 'PrismVideoCacheDB'].map(name => new Promise(res => {
+                        const req = indexedDB.deleteDatabase(name);
+                        req.onsuccess = req.onerror = req.onblocked = () => res();
+                    })));
+                }
+
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(regs.map(r => r.unregister()));
+                }
+
+                localStorage.setItem(CLEANUP_FLAG_KEY, 'false');
+                localStorage.setItem(STORAGE_CLEARED_KEY, 'true');
+                updateCleanupVisibility();
+                alert('Cleanup complete! Leftover data has been removed.');
+            } catch (err) {
+                console.error('[Prism Cleanup]', err);
+                localStorage.setItem(CLEANUP_FLAG_KEY, 'true');
+                updateCleanupVisibility();
+                alert('Cleanup failed. Please try again.');
+            }
+        }
+
         function confirmAndRecache() {
             const gameWarning = _includeGames ? '\n\nGame assets included for download.' : '\n\nCore files only. Game assets excluded.';
-            if (!confirm(`Prism Download Mode\nCAUTION!\n\nPrism will delete old content and replace them with newer ones. Proceed?${gameWarning}\n\nYes, proceed. (OK)\nNo, do not proceed. (Cancel)`)) return;
+            if (!confirm(`Prism Update\nCAUTION!\n\nYou are about to update Prism to the latest version. Do you wish to proceed?${gameWarning}\n\nClick OK to update Prism.\nClick CANCEL to decline.`)) return;
             clearAndRecache('full');
         }
 
@@ -2442,10 +3341,19 @@
             const dlTip = document.getElementById('download-tip');
             const dlTitle = document.getElementById('dl-phase-title');
             const dlSub = document.getElementById('dl-phase-sub');
+            const dlSkip = document.getElementById('dl-skip-btn');
+
+            const phaseBars = {
+                clear: document.getElementById('dl-bar-clear'),
+                check: document.getElementById('dl-bar-check'),
+                download: document.getElementById('dl-bar-download'),
+                cache: document.getElementById('dl-bar-cache')
+            };
 
             dlPage.classList.add('open');
             dlBar.style.transition = 'none';
             dlBar.style.width = '0%';
+            dlSkip.classList.remove('show');
 
             function setPhase(rowId, state, statusText, icon) {
                 const row = document.getElementById(rowId);
@@ -2453,6 +3361,16 @@
                 row.className = 'dl-pipeline-row ' + state;
                 row.querySelector('.dl-phase-status').textContent = statusText;
                 row.querySelector('.dl-phase-icon').textContent = icon;
+            }
+
+            function setPhaseBar(phase, pct) {
+                const bar = phaseBars[phase];
+                if (!bar) return;
+                bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+            }
+
+            function setOverall(pct) {
+                dlBar.style.width = Math.min(100, Math.max(0, pct)) + '%';
             }
 
             const tips = [
@@ -2527,21 +3445,58 @@
             const tipInterval = setInterval(cycleTip, 3000);
 
             let freshVersion = null;
-            let watchdogTimer = null;
             let finished = false;
+            let skippedByUser = false;
+            let downloadComplete = false;
+            let storeComplete = false;
 
-            function resetWatchdog() {
-                clearTimeout(watchdogTimer);
-                watchdogTimer = setTimeout(() => {
-                    if (finished) return;
-                    console.warn('[Prism Download Mode]: No progress after 20s, proceeding restart...');
-                    finished = true;
-                    clearInterval(tipInterval);
-                    dlTitle.textContent = 'Stalled';
-                    dlSub.textContent = 'Reloading anyway...';
-                    setTimeout(() => { window.location.reload(); }, 1500);
-                }, 30000);
+            let settleTimer = null;
+
+            function scheduleFinishCheck() {
+                clearTimeout(settleTimer);
+                settleTimer = setTimeout(maybeFinish, 700);
             }
+
+            function maybeFinish() {
+                if (finished || skippedByUser) return;
+                if (!downloadComplete || !storeComplete) return;
+                finished = true;
+                clearTimeout(skipTimer);
+                clearTimeout(settleTimer);
+                clearInterval(tipInterval);
+                if (_cacheProgressHandler && navigator.serviceWorker) {
+                    navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
+                }
+                setOverall(100);
+                dlTitle.textContent = 'update finished';
+                dlSub.textContent = 'update complete';
+                if (freshVersion) localStorage.setItem('PRISM_SW_VERSION', freshVersion);
+                setTimeout(() => {
+                    alert('Prism Update\n\nPrism has been fully updated. Click OK to restart.');
+                    window.location.reload();
+                }, 700);
+            }
+
+            const skipTimer = setTimeout(() => {
+                if (finished || skippedByUser) return;
+                dlSkip.classList.add('show');
+                dlSkip.onclick = () => {
+                    if (finished || skippedByUser) return;
+                    skippedByUser = true;
+                    dlSkip.onclick = null;
+                    dlSkip.style.pointerEvents = 'none';
+                    clearTimeout(skipTimer);
+                    clearInterval(tipInterval);
+                    if (_cacheProgressHandler && navigator.serviceWorker) {
+                        navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
+                    }
+                    dlTitle.textContent = 'skipping';
+                    dlSub.textContent = 'update skipped, restarting...';
+                    setPhase('dl-phase-download', 'error', 'Skipped', 'skip_next');
+                    setPhase('dl-phase-cache', 'error', 'Skipped', 'skip_next');
+                    setTimeout(() => { window.location.reload(); }, 800);
+                };
+            }, 15000);
 
             if (_cacheProgressHandler && navigator.serviceWorker) {
                 navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
@@ -2549,56 +3504,103 @@
 
             _cacheProgressHandler = (event) => {
                 if (!event.data) return;
-                const { type, progress, processed, total, errors, url } = event.data;
+                const { type, progress, processed, stored, total, errors, url, checked, ok, skipped } = event.data;
 
                 if (type === 'CACHE_START') {
-                    resetWatchdog();
-                    dlBar.style.transition = 'width 0.15s linear';
-                    setPhase('dl-phase-download', 'active', `0 / ${total}`, 'sync');
-                    setPhase('dl-phase-cache', 'active', 'Writing', 'sync');
-                    dlTitle.textContent = 'Downloading';
-                    dlSub.textContent = `Fetching ${total} assets`;
+                    dlBar.style.transition = 'width 0.2s linear';
+                    setOverall(0);
+                    setPhase('dl-phase-check', 'active', `0 / ${total}`, 'search');
+                    setPhaseBar('check', 0);
+                    dlTitle.textContent = 'checking assets';
+                    dlSub.textContent = `verifying ${total} files`;
+                    return;
+                }
+
+                if (type === 'CACHE_CHECK') {
+                    const pct = Math.round((checked / total) * 100);
+                    setPhaseBar('check', pct);
+                    setOverall(5 + pct * 0.2);
+                    setPhase('dl-phase-check', 'active', `${checked} / ${total}`, 'search');
+                    dlTitle.textContent = 'checking assets';
+                    dlSub.textContent = `${checked} / ${total} verified`;
+                    return;
+                }
+
+                if (type === 'CACHE_CHECK_DONE') {
+                    setPhaseBar('check', 100);
+                    setOverall(25);
+                    setPhase('dl-phase-check', 'done', `${total} / ${total}`, 'check_circle');
+
+                    if (ok === 0) {
+                        dlTitle.textContent = 'nothing to download';
+                        dlSub.textContent = `${skipped} asset${skipped !== 1 ? 's' : ''} unreachable`;
+                        setPhase('dl-phase-download', 'error', `0 / ${total}`, 'warning');
+                        setPhase('dl-phase-cache', 'error', 'Skipped', 'warning');
+                        setPhaseBar('download', 100);
+                        setPhaseBar('cache', 100);
+                        return;
+                    }
+
+                    setPhase('dl-phase-download', 'active', `0 / ${ok}`, 'sync');
+                    setPhaseBar('download', 0);
+                    dlTitle.textContent = 'downloading';
+                    dlSub.textContent = `${ok} file${ok !== 1 ? 's' : ''} to fetch${skipped > 0 ? ` · ${skipped} skipped` : ''}`;
                     return;
                 }
 
                 if (type === 'CACHE_ERROR') {
-                    resetWatchdog();
-                    dlSub.textContent = `${errors} error${errors !== 1 ? 's' : ''} so far`;
+                    dlSub.textContent = `${errors} skipped so far`;
                     return;
                 }
 
                 if (type === 'CACHE_PROGRESS') {
-                    resetWatchdog();
-                    dlBar.style.width = progress + '%';
+                    setPhaseBar('download', progress);
+                    setOverall(25 + progress * 0.45);
 
                     if (progress > 0 && progress < 100) {
                         setPhase('dl-phase-download', 'active', `${processed} / ${total}`, 'sync');
-                        dlTitle.textContent = 'PROCESSING';
-                        dlSub.textContent = `${progress}%${errors > 0 ? ` · ${errors} skipped` : ''}`;
+                        dlTitle.textContent = 'downloading';
+                        dlSub.textContent = `${processed} / ${total}${errors > 0 ? ` · ${errors} skipped` : ''}`;
                     }
 
                     if (progress >= 100) {
-                        finished = true;
-                        clearTimeout(watchdogTimer);
-                        clearInterval(tipInterval);
-                        navigator.serviceWorker.removeEventListener('message', _cacheProgressHandler);
-                        setPhase('dl-phase-download', 'done', 'Done', 'check_circle');
-                        setPhase('dl-phase-cache', errors > 0 ? 'error' : 'done', errors > 0 ? `${errors} skipped` : 'Done', errors > 0 ? 'warning' : 'check_circle');
-                        dlTitle.textContent = 'Complete';
-                        dlSub.textContent = errors > 0 ? `Done with ${errors} skip${errors !== 1 ? 's' : ''}` : 'Finished, proceeding restart...';
-                        if (freshVersion) localStorage.setItem('PRISM_SW_VERSION', freshVersion);
-                        setTimeout(() => { window.location.reload(); }, 2500);
+                        downloadComplete = true;
+                        setPhase('dl-phase-download', 'done', `${processed} / ${total}`, 'check_circle');
+                        setPhaseBar('download', 100);
+                        if (!storeComplete) {
+                            dlTitle.textContent = 'saving to storage';
+                            dlSub.textContent = 'writing files locally...';
+                        }
+                        scheduleFinishCheck();
                     }
+                    return;
+                }
+
+                if (type === 'CACHE_STORE') {
+                    setPhaseBar('cache', progress);
+                    setOverall(70 + progress * 0.3);
+
+                    if (progress > 0 && progress < 100) {
+                        setPhase('dl-phase-cache', 'active', `${stored} / ${total}`, 'sync');
+                    }
+
+                    if (progress >= 100) {
+                        storeComplete = true;
+                        setPhase('dl-phase-cache', errors > 0 ? 'error' : 'done', errors > 0 ? `${errors} skipped` : `${stored} / ${total}`, errors > 0 ? 'warning' : 'check_circle');
+                        setPhaseBar('cache', 100);
+                        scheduleFinishCheck();
+                    }
+                    return;
                 }
             };
 
             navigator.serviceWorker.addEventListener('message', _cacheProgressHandler);
-            resetWatchdog();
 
             try {
-                dlTitle.textContent = 'Purging';
-                dlSub.textContent = 'Deleting old IDB/Cache content...';
+                dlTitle.textContent = 'purging';
+                dlSub.textContent = 'deleting previous IDB/Cache....';
                 setPhase('dl-phase-clear', 'active', 'Running', 'sync');
+                setPhaseBar('clear', 40);
 
                 const CORE_URLS = [
                     '/',
@@ -2617,44 +3619,63 @@
                     './Other/websend',
                     './Tools/lapscan',
                     './Tools/pixelpeek',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo2.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo192.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/nocturneassets/logo512.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/ismycompteureron.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/devcheck.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/notmoving.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/gifview.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/mathlol.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/coinsort.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Other/js/websend.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Tools/js/lapscan.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/Tools/js/pixelpeek.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/monsieurshaman.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/shinobiakira.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/haku.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo2.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo192.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/project-assets/logo512.png',
                     'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
                     'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500;700&display=swap',
                     'https://fonts.googleapis.com/icon?family=Material+Icons+Round',
                 ];
 
                 const GAME_URLS = [
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/sb3dfavicon.svg',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/sb3dammo.js',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/sb3dmatyou.js',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/sb3duianim_pc.js',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/sb3duianim_mobile.js',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/blind.mp4',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/explode.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/neutral/neu1.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/neutral/neu2.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/neutral/neu3.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/evening/eve1.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/evening/eve2.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/evening/eve3.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/midnight/mid1.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/midnight/mid2.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/midnight/mid3.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/midnight/mid4.mp3',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/ground.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/ramp.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/stairs.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/pool.png',
-                    'https://cdn.jsdelivr.net/gh/nocturnestu/NOCTURNE_Library@main/SandBox3D/asset/pillars.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/sb3dfavicon.svg',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/sb3dammo.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/sb3dmatyou.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/sb3duianim_pc.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/sb3duianim_mobile.js',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/blind.mp4',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/explode.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/neutral/neu1.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/neutral/neu2.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/neutral/neu3.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/evening/eve1.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/evening/eve2.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/evening/eve3.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/midnight/mid1.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/midnight/mid2.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/midnight/mid3.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/midnight/mid4.mp3',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/ground.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/ramp.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/stairs.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/pool.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/project-prism@main/SandBox3D/asset/pillars.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/obj_glass.png',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/ground_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/rampstairs_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/pillars_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/pool_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/rubber_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/ice_texturepbr.zip',
+                    'https://cdn.jsdelivr.net/gh/monsieurshaman/sb3d-assets@main/allobj_texturepbr.zip',
                     'https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js',
                     'https://cdn.jsdelivr.net/npm/babylonjs@9.11.0/babylon.js',
                     'https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js',
                     'https://cdn.babylonjs.com/ammo.js',
                     'https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.11.0/babylonjs.loaders.min.js',
-                    'https://cdn.jsdelivr.net/npm/babylonjs-inspector@9.11.0/babylon.inspector.bundle.js',
                     'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
                     'https://assets.babylonjs.com/textures/flare.png',
                 ];
@@ -2683,7 +3704,7 @@
                 }
 
                 await new Promise((resolve) => {
-                    const openReq = indexedDB.open('NOCTURNE_Studios_DB', 1);
+                    const openReq = indexedDB.open('PrismDB', 1);
                     openReq.onsuccess = (e) => {
                         const db = e.target.result;
                         try {
@@ -2713,9 +3734,12 @@
                 });
 
                 setPhase('dl-phase-clear', 'done', 'Done', 'check_circle');
-                dlTitle.textContent = 'DOWNLOADING';
-                dlSub.textContent = 'Starting up...';
-                setPhase('dl-phase-download', 'active', 'Starting', 'sync');
+                setPhaseBar('clear', 100);
+                setOverall(5);
+                dlTitle.textContent = 'checking assets';
+                dlSub.textContent = 'contacting update server...';
+                setPhase('dl-phase-check', 'active', 'Starting', 'search');
+                setPhaseBar('check', 0);
 
                 try {
                     const swRes = await fetch('/sw.js', { cache: 'no-store' });
@@ -2730,7 +3754,7 @@
             } catch (err) {
                 console.error('[Prism Download Mode]: Prism reinstall error: ', err);
                 finished = true;
-                clearTimeout(watchdogTimer);
+                clearTimeout(skipTimer);
                 clearInterval(tipInterval);
                 setPhase('dl-phase-clear', 'error', 'Failed', 'error');
                 setTimeout(() => { window.location.reload(); }, 1500);
@@ -2850,6 +3874,10 @@
 
         function toggleSettings() {
             const page = document.getElementById('settings-page');
+            const isOpening = !page.classList.contains('open');
+            if (isOpening) {
+                closeAllModals();
+            }
             page.classList.toggle('open');
         }
 
@@ -2928,6 +3956,7 @@
 
         function openModal(id) {
             closeAllModals();
+            document.getElementById('settings-page').classList.remove('open');
             const targetPanel = document.getElementById(id);
             if(targetPanel) {
                 targetPanel.classList.add('open');
@@ -2943,6 +3972,18 @@
                 document.body.style.overflow = '';
             }
         }
+
+        function toggleCredits() {
+            document.getElementById('credits-dialog').classList.toggle('open');
+            document.getElementById('credits-backdrop').classList.toggle('open');
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.getElementById('credits-dialog').classList.remove('open');
+                document.getElementById('credits-backdrop').classList.remove('open');
+            }
+        });
 
         function handleOverlayClick(e) { return; }
 
@@ -2974,11 +4015,11 @@
             const isStandalone = window.__PRISM_ENV__.isStandalone;
 
             const taglines = [
-                'Making thoughts...',
-                'Progressing...',
-                'Deeply thinking...',
-                'Waking up...',
-                'Thinking...',
+                'editing videos for you...',
+                'heating up your sandwich...',
+                'beating the meat...',
+                'testing stuff..',
+                'cooking rice...',
             ];
 
             function setStatus(text) {
@@ -3008,7 +4049,7 @@
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register(
-                    `/sw.js?standalone=${isStandalone}&includeGames=true`
+                    `/sw.js?standalone=${isStandalone}&includeGames={isStandalone}`
                 );
             }
 
@@ -3030,7 +4071,7 @@
         });
 
         function saveAppDataToIDB(key, value) {
-            const request = indexedDB.open('NOCTURNE_Studios_DB', 1);
+            const request = indexedDB.open('PrismDB', 1);
             request.onsuccess = function (e) {
                 const db = e.target.result;
                 const transaction = db.transaction('dynamic-cache', 'readwrite');
@@ -3040,7 +4081,7 @@
         }
 
         function getAppDataFromIDB(key, callback) {
-            const request = indexedDB.open('NOCTURNE_Studios_DB', 1);
+            const request = indexedDB.open('PrismDB', 1);
             request.onsuccess = function (e) {
                 const db = e.target.result;
                 const transaction = db.transaction('dynamic-cache', 'readonly');
@@ -3095,13 +4136,13 @@
         })();
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateCleanupVisibility();
             const isStandalone = window.__PRISM_ENV__.isStandalone;
 
             if (isStandalone) {
                 const mobileTrigger = document.getElementById('changelog-trigger-mobile');
                 const desktopTrigger = document.getElementById('changelog-trigger-desktop');
-                if (mobileTrigger) mobileTrigger.style.display = 'inline-flex';
-                if (desktopTrigger) desktopTrigger.style.display = 'inline-flex';
+                if (mobileTrigger) mobileTrigger.style.display = 'flex';
 
                 fetch('changelog.json?t=' + Date.now(), { cache: 'no-store' })
                     .then(res => {
@@ -3112,13 +4153,31 @@
                         document.getElementById('cl-modal-version').textContent = data.release;
                         document.getElementById('cl-modal-title').textContent = data.title;
                         document.getElementById('cl-modal-msg').textContent = data.message;
+
+                        const seenRelease = localStorage.getItem('PRISM_SEEN_CHANGELOG');
+                        if (data.release && data.release !== seenRelease) {
+                            const bubble = document.getElementById('changelog-bubble');
+                            if (bubble) bubble.style.display = 'block';
+                            const bubbleDesktop = document.getElementById('changelog-bubble-desktop');
+                            if (bubbleDesktop) bubbleDesktop.style.display = 'block';
+                        }
                     })
                     .catch(err => {
-                        console.error('[Prism Logs]: Could not fetch the latest Prism changelogs...', err);
+                        console.error('[Prism Logs]: cannot fetch new logs due to network error...', err);
                         document.getElementById('cl-modal-msg').textContent =
-                            'Prism is unable to fetch new contents for changelogs, try again next time when you have internet connection...';
+                            'something is missing here...';
                     });
             }
+        });
+
+        document.addEventListener('click', (e) => {
+            const bubbleMobile = document.getElementById('changelog-bubble');
+            const bubbleDesktop = document.getElementById('changelog-bubble-desktop');
+            const mobileOpen = bubbleMobile && bubbleMobile.style.display !== 'none';
+            const desktopOpen = bubbleDesktop && bubbleDesktop.style.display !== 'none';
+            if (!mobileOpen && !desktopOpen) return;
+            if (e.target.closest('#changelog-trigger-mobile') || e.target.closest('#changelog-trigger-desktop')) return;
+            dismissChangelogBubble();
         });
 
         (function initCardPhysics() {
@@ -3248,6 +4307,8 @@
             const DB_NAME = 'PrismVideoCacheDB';
             const STORE_NAME = 'videos';
             const KEY = 'custom_bg_video';
+            const SOUND_KEY = 'prism-video-sound';
+            const VOLUME_KEY = 'prism-video-volume';
 
             function openDB() {
                 return new Promise((resolve, reject) => {
@@ -3296,11 +4357,76 @@
                 });
             }
 
+            function getSavedVolume() {
+                const v = parseFloat(localStorage.getItem(VOLUME_KEY));
+                return isNaN(v) ? 0.5 : Math.min(1, Math.max(0, v));
+            }
+
+            function isSoundOn() {
+                return localStorage.getItem(SOUND_KEY) === 'true';
+            }
+
+            function applySoundState() {
+                const videoEl = document.getElementById('bg-video');
+                const icon = document.getElementById('video-bg-sound-icon');
+                const wrap = document.getElementById('video-bg-volume-wrap');
+                const slider = document.getElementById('video-bg-volume');
+                const on = isSoundOn();
+                const hasVideo = !!(videoEl && videoEl.src);
+
+                if (videoEl) {
+                    videoEl.volume = getSavedVolume();
+                    videoEl.muted = !on;
+                    if (on && hasVideo) {
+                        videoEl.play().catch(() => {
+                            videoEl.muted = true;
+                            videoEl.play().catch(() => { });
+                        });
+                    }
+                }
+
+                if (icon) icon.textContent = on ? 'volume_up' : 'volume_off';
+                if (wrap) wrap.style.display = (on && hasVideo) ? 'flex' : 'none';
+                if (slider) slider.value = Math.round(getSavedVolume() * 100);
+            }
+
+            function toggleSound() {
+                localStorage.setItem(SOUND_KEY, isSoundOn() ? 'false' : 'true');
+                applySoundState();
+            }
+
+            function setVolume(value) {
+                const v = Math.min(1, Math.max(0, Number(value) / 100));
+                localStorage.setItem(VOLUME_KEY, String(v));
+                const videoEl = document.getElementById('bg-video');
+                if (videoEl) {
+                    videoEl.volume = v;
+                    if (isSoundOn() && videoEl.muted) {
+                        videoEl.muted = false;
+                        videoEl.play().catch(() => { });
+                    }
+                }
+            }
+
+            function armSoundGesture() {
+                if (!isSoundOn()) return;
+                const unlock = () => {
+                    window.removeEventListener('pointerdown', unlock);
+                    window.removeEventListener('keydown', unlock);
+                    window.removeEventListener('touchstart', unlock);
+                    applySoundState();
+                };
+                window.addEventListener('pointerdown', unlock, { passive: true });
+                window.addEventListener('keydown', unlock);
+                window.addEventListener('touchstart', unlock, { passive: true });
+            }
+
             async function applyVideo() {
                 const videoEl = document.getElementById('bg-video');
                 const gifEl = document.querySelector('.bg-gif');
                 const clearBtn = document.getElementById('clear-video-bg-btn');
                 const refreshBtn = document.getElementById('refresh-video-bg-btn');
+                const soundBtn = document.getElementById('video-bg-sound-btn');
 
                 if (!videoEl) return;
 
@@ -3313,16 +4439,23 @@
                         if (gifEl) gifEl.style.display = 'none';
                         if (clearBtn) clearBtn.style.display = 'inline-block';
                         if (refreshBtn) refreshBtn.style.display = 'inline-block';
+                        if (soundBtn) soundBtn.style.display = 'inline-block';
                     } else {
+                        videoEl.pause();
+                        videoEl.currentTime = 0;
+                        videoEl.muted = true;
                         if (videoEl.src) URL.revokeObjectURL(videoEl.src);
                         videoEl.removeAttribute('src');
+                        videoEl.load();
                         videoEl.style.display = 'none';
                         if (gifEl && localStorage.getItem('bg-gif-enabled') !== 'false') {
                             gifEl.style.display = 'block';
                         }
                         if (clearBtn) clearBtn.style.display = 'none';
                         if (refreshBtn) refreshBtn.style.display = 'none';
+                        if (soundBtn) soundBtn.style.display = 'none';
                     }
+                    applySoundState();
                 } catch (e) {
                     console.error(e);
                 }
@@ -3334,6 +4467,7 @@
                 videoEl.pause();
                 videoEl.currentTime = 0;
                 videoEl.load();
+                applySoundState();
                 videoEl.play().catch(() => { });
             }
 
@@ -3353,6 +4487,16 @@
             }
 
             async function removeVideo() {
+                const videoEl = document.getElementById('bg-video');
+                if (videoEl) {
+                    videoEl.pause();
+                    videoEl.currentTime = 0;
+                    videoEl.muted = true;
+                    if (videoEl.src) URL.revokeObjectURL(videoEl.src);
+                    videoEl.removeAttribute('src');
+                    videoEl.load();
+                    videoEl.style.display = 'none';
+                }
                 await deleteVideoBlob();
                 await applyVideo();
             }
@@ -3365,6 +4509,7 @@
             window.addEventListener('DOMContentLoaded', () => {
                 syncDevVisibility();
                 applyVideo();
+                armSoundGesture();
             });
 
             window.addEventListener('dev-preview-change', (e) => {
@@ -3382,7 +4527,10 @@
                 removeVideo,
                 refreshVideo,
                 syncDevVisibility,
-                applyVideo
+                applyVideo,
+                toggleSound,
+                setVolume,
+                applySoundState
             };
         })();
     </script>
@@ -3402,7 +4550,7 @@
 
                     if (savedVersion !== liveVersion) {
                         if (isStandalone) {
-                            const ok = confirm(`Prism Download Mode\n\nPrism found a new version: ${liveVersion}\n\nDo you want to update now?\n\nYes, update my Prism. (OK)\nNo, do not update my Prism yet. (Cancel)`);
+                            const ok = confirm(`Prism Update\n\nWe have found a new version for you: ${liveVersion}\n\nDo you want to update now? You can click OK to proceed.\nClick CANCEL to decline.`);
                             if (ok) {
                                 killStartupLoader();
                                 localStorage.setItem(SW_VERSION_KEY, liveVersion);
@@ -3410,10 +4558,10 @@
                             }
                         } else {
                             localStorage.setItem(SW_VERSION_KEY, liveVersion);
-                            navigator.serviceWorker.register(`/sw.js?standalone=${isStandalone}&includeGames=true`);
+                            navigator.serviceWorker.register(`/sw.js?standalone=${isStandalone}&includeGames=${isStandalone}`);
                         }
                     } else {
-                        navigator.serviceWorker.register(`/sw.js?standalone=${isStandalone}&includeGames=true`);
+                        navigator.serviceWorker.register(`/sw.js?standalone=${isStandalone}&includeGames=${isStandalone}`);
                     }
                 });
         }
